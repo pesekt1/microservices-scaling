@@ -1,0 +1,26 @@
+# Use the official Node.js image as the base image
+FROM node:16-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Add wait-for-it.sh script
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# Expose the port the app runs on
+EXPOSE 3001
+
+# Start the application
+#CMD ["npm", "start"]
+# Start the application with increased timeout using the wait-for-it.sh script
+CMD ["./wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "./wait-for-it.sh", "mysql:3306", "-t", "60", "--", "npm", "start"]

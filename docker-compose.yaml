@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ protocol port
+      - "15672:15672" # RabbitMQ management console
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bank_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  bank-microservice:
+    build:
+      context: ./bank-microservice
+    container_name: bank-microservice
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      RABBITMQ_URL: amqp://rabbitmq
+      QUEUE_NAME: bankPackets
+
+  consumer-microservice:
+    build:
+      context: ./consumer-microservice
+    #removed the name because of scaling
+    #container_name: consumer-microservice
+    depends_on:
+      - rabbitmq
+      - mysql
+    #removed the port mapping because of scaling
+    # ports:
+    #   - "3001:3001"
+    environment:
+      PORT: 3001
+      RABBITMQ_URL: amqp://rabbitmq
+      QUEUE_NAME: bankPackets
+      DATABASE_URL: mysql://user:password@mysql:3306/bank_db
+
+volumes:
+  mysql_data:
