@@ -20,7 +20,7 @@ docker-compose up --build -d
 docker-compose down
 ```
 
-### How to scale a service within docker-compose:
+### How to scale a service running in docker-compose:
 ```bash
 docker-compose up --scale service_name=3
 ```
@@ -34,3 +34,40 @@ Limitations:
 
 ## Scaling with Kubernetes:
 The proper way to scale microservices is to use an orchestration tool like Kubernetes. Kubernetes is a container orchestration tool that automates the deployment, scaling, and management of containerized applications. 
+
+Create Kubernetes files.
+
+run kubernetes manifests:
+```bash
+kubectl apply -f <manifests_folder>
+```
+
+verify deployments:
+```bash
+kubectl get deployments
+kubectl get pods
+kubectl get services
+```
+
+delete deployments:
+```bash
+kubectl delete -f <manifests_folder>
+```
+
+Create docker images and push them to your dockerhub (run from the microservice folder):
+```bash
+docker build -t pesekt1/bank-service .
+docker build -t pesekt1/consumer-service .
+```
+
+Push images to dockerhub:
+```bash
+docker push pesekt1/bank-service
+docker push pesekt1/consumer-service
+
+```
+
+run kubernetes manifests:
+```bash
+kubectl apply -f ./kubernetes
+```

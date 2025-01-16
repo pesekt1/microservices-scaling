@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-microservice
+  template:
+    metadata:
+      labels:
+        app: consumer-microservice
+    spec:
+      containers:
+      - name: consumer-microservice
+        image: pesekt1/consumer-microservice:latest
+        ports:
+        - containerPort: 3001
+        env:
+        - name: PORT
+          value: "3001"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq"
+        - name: QUEUE_NAME
+          value: "bankPackets"
+        - name: DATABASE_URL
+          value: "mysql://user:password@mysql:3306/bank_db"

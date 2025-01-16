@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-metrics-adapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-metrics-adapter
+  template:
+    metadata:
+      labels:
+        app: custom-metrics-adapter
+    spec:
+      containers:
+      - name: custom-metrics-adapter
+        image: directxman12/k8s-prometheus-adapter
+        args:
+        - --config=/etc/adapter/config.yaml
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/adapter
+  volumes:
+  - name: config-volume
+    configMap:
+      name: custom-metrics-adapter-config
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-metrics-adapter-config
+data:
+  config.yaml: |
+    rules:
+    - seriesQuery: 'rabbitmq_queue_messages{queue="bankPackets"}'
+      resources:
+        overrides:
+          namespace:
+            resource: "namespace"
+          pod:
+            resource: "pod"
+      name:
+        matches: "rabbitmq_queue_messages"
+        as: "queue_messages"
+      metricsQuery: 'sum(rate(rabbitmq_queue_messages[2m])) by (namespace, pod)'
