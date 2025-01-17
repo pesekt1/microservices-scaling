@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-exporter
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-exporter
+    spec:
+      containers:
+      - name: rabbitmq-exporter
+        image: kbudde/rabbitmq-exporter
+        ports:
+        - containerPort: 9419
+        env:
+        - name: RABBIT_URL
+          value: "http://guest:guest@rabbitmq:15672" # Correct URL format
+        - name: RABBIT_USER
+          value: "guest"
+        - name: RABBIT_PASSWORD
+          value: "guest"
+        - name: RABBITMQ_EXPORTER_INCLUDE_QUEUES
+          value: ".*" # Enable metrics for all queues

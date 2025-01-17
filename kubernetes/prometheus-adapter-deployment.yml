@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-adapter
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-adapter
+  template:
+    metadata:
+      labels:
+        app: prometheus-adapter
+    spec:
+      containers:
+      - name: prometheus-adapter
+        image: willdockerhub/prometheus-adapter:v0.9.1
+        args:
+          - --config=/etc/prometheus-adapter/config.yaml
+          - --prometheus-url=http://localhost:9090  # Point this to your Prometheus server with port forwarding
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/prometheus-adapter
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-adapter-config

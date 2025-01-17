@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-microservice
+  template:
+    metadata:
+      labels:
+        app: bank-microservice
+    spec:
+      containers:
+      - name: bank-microservice
+        image: pesekt1/bank-microservice:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq"
+        - name: QUEUE_NAME
+          value: "bankPackets"

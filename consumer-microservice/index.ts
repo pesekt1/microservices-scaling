@@ -48,7 +48,8 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function startConsumer() {
   try {
-    await sequelize.sync({ force: true }); // means drop all tables and recreate them
+    await sequelize.sync(); // means drop all tables and recreate them
+    //await sequelize.sync({ force: true }); // means drop all tables and recreate them
     console.log("Database synced.");
 
     const connection = await amqplib.connect(

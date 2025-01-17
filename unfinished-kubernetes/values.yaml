@@ -1,0 +1,14 @@
+prometheus:
+  url: http://localhost:9090  # Point this to your Prometheus server with port forwarding
+
+rules:
+  custom:
+    - seriesQuery: 'rabbitmq_queue_messages{queue="bankPackets"}'
+      resources:
+        overrides:
+          namespace:
+            resource: "namespace"
+      name:
+        matches: "^(.*)_sum$"
+        as: "${1}"
+      metricsQuery: 'rabbitmq_queue_messages{queue="bankPackets"}'
