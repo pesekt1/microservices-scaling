@@ -36,6 +36,7 @@ services:
       PORT: 3000
       RABBITMQ_URL: amqp://rabbitmq
       QUEUE_NAME: bankPackets
+      MESSAGE_SPEED: 1000
 
   consumer-microservice:
     build:
@@ -53,6 +54,7 @@ services:
       RABBITMQ_URL: amqp://rabbitmq
       QUEUE_NAME: bankPackets
       DATABASE_URL: mysql://user:password@mysql:3306/bank_db
+      MESSAGE_PROCESSING_SPEED: 3000
 
 volumes:
   mysql_data:

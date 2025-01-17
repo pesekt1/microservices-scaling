@@ -7,6 +7,9 @@ const app = express();
 const PORT = process.env.PORT;
 const RABBITMQ_URL = process.env.RABBITMQ_URL as string;
 const QUEUE_NAME = process.env.QUEUE_NAME as string;
+const MESSAGE_PROCESSING_SPEED = parseInt(
+  process.env.MESSAGE_PROCESSING_SPEED as string
+);
 
 const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
   dialect: "mysql",
@@ -52,24 +55,22 @@ async function startConsumer() {
     //await sequelize.sync({ force: true }); // means drop all tables and recreate them
     console.log("Database synced.");
 
-    const connection = await amqplib.connect(
-      process.env.RABBITMQ_URL as string
-    );
+    const connection = await amqplib.connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
-    await channel.assertQueue(process.env.QUEUE_NAME as string);
+    await channel.assertQueue(QUEUE_NAME);
 
     // Limit the number of unacknowledged messages to 1
     channel.prefetch(1);
 
     channel.consume(
-      process.env.QUEUE_NAME as string,
+      QUEUE_NAME,
       async (msg) => {
         if (msg) {
           const data = JSON.parse(msg.content.toString());
           console.log("Received:", data);
 
           // Simulate processing delay
-          await delay(3000);
+          await delay(MESSAGE_PROCESSING_SPEED);
 
           const processedTransaction = {
             ...data,

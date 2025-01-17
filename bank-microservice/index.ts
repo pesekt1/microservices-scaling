@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT;
 const RABBITMQ_URL = process.env.RABBITMQ_URL as string;
 const QUEUE_NAME = process.env.QUEUE_NAME as string;
+const MESSAGE_SPEED = parseInt(process.env.MESSAGE_SPEED as string);
 
 async function startProducer() {
   try {
@@ -15,6 +16,7 @@ async function startProducer() {
     await channel.assertQueue(QUEUE_NAME);
     console.log("Connected to RabbitMQ and queue asserted");
 
+    // Send a message every MESSAGE_SPEED milliseconds
     setInterval(() => {
       const dataPacket = {
         accountId: faker.string.uuid(),
@@ -25,7 +27,7 @@ async function startProducer() {
 
       channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(dataPacket)));
       console.log("Sent:", dataPacket);
-    }, 1000);
+    }, MESSAGE_SPEED);
 
     console.log("Bank service is running...");
   } catch (error) {
