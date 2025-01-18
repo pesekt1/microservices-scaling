@@ -1,0 +1,32 @@
+# promQL queries examples for Prometheus:
+
+
+# 1. Queue Depth (Number of Messages in the Queue)
+rabbitmq_queue_messages{queue="bankPackets"}
+
+# 2. Rate of Messages Published to the Queue (per second over the last 5 minutes)
+rate(rabbitmq_queue_messages_published_total{queue="bankPackets"}[5m])
+
+# 3. Rate of Messages Acknowledged (per second over the last 5 minutes)
+rate(rabbitmq_queue_messages_ack_total{queue="bankPackets"}[5m])
+
+# 4. Rate of Messages Delivered to Consumers (per second over the last 5 minutes)
+rate(rabbitmq_queue_messages_delivered_total{queue="bankPackets"}[5m])
+
+# 5. Unacknowledged Messages in the Queue
+rabbitmq_queue_messages_unacknowledged{queue="bankPackets"}
+
+# 6. Message Rate by Nodes (Published Messages per Node)
+rate(rabbitmq_queue_messages_published_total{queue="bankPackets"}[5m]) by (node)
+
+# 7. Current Number of Consumers for the Queue
+rabbitmq_queue_consumers{queue="bankPackets"}
+
+# 8. Memory Usage of the Queue (in bytes)
+rabbitmq_queue_memory_bytes{queue="bankPackets"}
+
+# 9. Queue Message Rates Comparison (Published vs Acknowledged)
+rate(rabbitmq_queue_messages_published_total{queue="bankPackets"}[5m]) - rate(rabbitmq_queue_messages_ack_total{queue="bankPackets"}[5m])
+
+# 10. Alert on Queue Depth (e.g., if queue depth exceeds 1,000 messages)
+rabbitmq_queue_messages{queue="bankPackets"} > 1000
