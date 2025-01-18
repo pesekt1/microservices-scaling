@@ -19,6 +19,7 @@ spec:
         args:
           - --config=/etc/prometheus-adapter/config.yaml
           - --prometheus-url=http://localhost:9090  # Point this to your Prometheus server with port forwarding
+          - --cert-dir=/tmp/cert  # Specify a writable directory for the certificates
         volumeMounts:
           - name: config-volume
             mountPath: /etc/prometheus-adapter

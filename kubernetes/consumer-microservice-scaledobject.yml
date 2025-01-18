@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer-microservice-scaledobject
+  namespace: default
+spec:
+  scaleTargetRef:
+    name: consumer-microservice
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  pollingInterval: 30  # Polling interval in seconds
+  cooldownPeriod: 60  # Cooldown period in seconds
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus.default.svc.cluster.local:9090
+      metricName: rabbitmq_queue_messages
+      query: avg(rabbitmq_queue_messages{queue="bankPackets"})
+      threshold: '20'
