@@ -1,1 +1,8 @@
-# Microservice 1 - exposing some data on localhost:5000/games
+# Bank microservice
+```
+Needs .env file:
+PORT = 3000
+RABBITMQ_URL = amqp://localhost
+QUEUE_NAME = bankPackets
+MESSAGE_SPEED = 1000 # milliseconds
+```
