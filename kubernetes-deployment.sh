@@ -38,9 +38,6 @@ if [ "$1" == "--delete" ]; then
   exit 0
 fi
 
-# deploy grafana
-kubectl apply -f https://raw.githubusercontent.com/grafana/grafana/main/deploy/kubernetes/grafana.yaml
-
 # Check if KEDA is installed
 if ! kubectl get namespace keda &> /dev/null; then
   echo "KEDA is not installed. Installing KEDA..."
