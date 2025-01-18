@@ -24,3 +24,5 @@ spec:
           value: "amqp://rabbitmq"
         - name: QUEUE_NAME
           value: "bankPackets"
+        - name: MESSAGE_SPEED
+          value: "1000"

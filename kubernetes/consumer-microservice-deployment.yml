@@ -26,3 +26,5 @@ spec:
           value: "bankPackets"
         - name: DATABASE_URL
           value: "mysql://user:password@mysql:3306/bank_db"
+        - name: MESSAGE_PROCESSING_SPEED
+          value: "3000"
