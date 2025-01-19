@@ -24,42 +24,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
 
-      # Check for changes in bank-microservice directory
-      - name: Check for changes in bank-microservice
-        id: bank_changes
-        run: |
-          git fetch origin main
-          if git diff --name-only FETCH_HEAD HEAD | grep -q '^bank-microservice/'; then
-            echo "bank-microservice changes detected"
-            echo "::set-output name=bank_changes::true"
-          else
-            echo "No changes in bank-microservice"
-            echo "::set-output name=bank_changes::false"
-          fi
-
-      # Build and push for bank-microservice if changes are detected in bank-microservice directory
+      # Build and push Docker image for bank-microservice
       - name: Build and push Docker image for bank-microservice
-        if: steps.bank_changes.outputs.bank_changes == 'true'
         run: |
           docker build -t pesekt1/bank-microservice:latest ./bank-microservice
           docker push pesekt1/bank-microservice:latest
 
-      # Check for changes in consumer-microservice directory
-      - name: Check for changes in consumer-microservice
-        id: consumer_changes
-        run: |
-          git fetch origin main
-          if git diff --name-only FETCH_HEAD HEAD | grep -q '^consumer-microservice/'; then
-            echo "consumer-microservice changes detected"
-            echo "::set-output name=consumer_changes::true"
-          else
-            echo "No changes in consumer-microservice"
-            echo "::set-output name=consumer_changes::false"
-          fi
-
-      # Build and push for consumer-microservice if changes are detected in consumer-microservice directory
+      # Build and push Docker image for consumer-microservice
       - name: Build and push Docker image for consumer-microservice
-        if: steps.consumer_changes.outputs.consumer_changes == 'true'
         run: |
           docker build -t pesekt1/consumer-microservice:latest ./consumer-microservice
           docker push pesekt1/consumer-microservice:latest
