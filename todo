@@ -1,3 +1,4 @@
+- Create a release branch of the current code and push it to the repository
 - Integrate prometheus with graphana to show the metrics in a dashboard
 - Create an event in MySQL to delete all data from transactions table every 60min - otherwise it just accumulates.
 - Create a frontend for the consumer
@@ -6,3 +7,4 @@
   - Then we need to run kubernetes deployment job.
   - We can set Kubernetes for rolling updates so the consumer replicas will be updated one at the time.
   - There should also be some testing but we can do it later
+- Add a fraud detection microservice that will check if the transaction is fraudulent. It will add status and reason. It will send the processed messages to new queues: save-transaction and fraud-transaction.
