@@ -14,7 +14,7 @@ async function startProducer() {
     const connection = await amqplib.connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME);
-    console.log("Connected to RabbitMQ and queue asserted!");
+    console.log("Connected to RabbitMQ and queue asserted.");
 
     // Send a message every MESSAGE_SPEED milliseconds
     setInterval(() => {
