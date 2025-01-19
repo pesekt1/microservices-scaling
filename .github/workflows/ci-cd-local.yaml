@@ -28,7 +28,8 @@ jobs:
       - name: Check for changes in bank-microservice
         id: bank_changes
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -q '^bank-microservice/'; then
+          git fetch origin main
+          if git diff --name-only FETCH_HEAD HEAD | grep -q '^bank-microservice/'; then
             echo "bank-microservice changes detected"
             echo "::set-output name=bank_changes::true"
           else
@@ -47,7 +48,8 @@ jobs:
       - name: Check for changes in consumer-microservice
         id: consumer_changes
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -q '^consumer-microservice/'; then
+          git fetch origin main
+          if git diff --name-only FETCH_HEAD HEAD | grep -q '^consumer-microservice/'; then
             echo "consumer-microservice changes detected"
             echo "::set-output name=consumer_changes::true"
           else
