@@ -8,6 +8,8 @@ on:
       - "bank-microservice/**" # Trigger if files in bank-microservice/ folder change
       - "consumer-microservice/**" # Trigger if files in consumer-microservice/ folder change
 
+  workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
