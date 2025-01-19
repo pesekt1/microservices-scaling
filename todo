@@ -1,5 +1,8 @@
 - Integrate prometheus with graphana to show the metrics in a dashboard
-- check this repo for more ideas: https://github.com/antonputra/tutorials/tree/main/lessons
-- https://github.com/antonputra/tutorials/blob/main/docs/contents.md
-- https://itnext.io/stop-using-rabbitmq-exporter-5817d39dc236
-- 
+- Create an event in MySQL to delete all data from transactions table every 60min - otherwise it just accumulates.
+- Create a frontend for the consumer
+- Show rolling updates in Kubernetes: 
+  - We need a CI/CD pipeline that creates a latest docker image and pushes it to Dockerhub. 
+  - Then we need to run kubernetes deployment job.
+  - We can set Kubernetes for rolling updates so the consumer replicas will be updated one at the time.
+  - There should also be some testing but we can do it later
