@@ -27,7 +27,7 @@ jobs:
       # Debug step to print the commit message
       - name: Print commit message
         run: |
-          echo "Commit message: \"${{ github.event.head_commit.message }}\""
+          echo "Commit message: ${{ github.event.head_commit.message }}\"
 
       # Build and push for bank-microservice if changes are detected in bank-microservice directory
       - name: Build and push Docker image for bank-microservice
