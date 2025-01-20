@@ -1,4 +1,4 @@
-# Consumer Microservice
+# Transaction Processing Microservice
 
 Needs .env file:
 ```

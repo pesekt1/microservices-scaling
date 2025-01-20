@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bank-microservice
+  name: bank
 spec:
   selector:
-    app: bank-microservice
+    app: bank
   ports:
     - protocol: TCP
       port: 3000

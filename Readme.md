@@ -39,14 +39,14 @@ Kubernetes needs a container registry to pull images from.
 
 Create docker images and push them to your dockerhub:
 ```bash
-docker build -t pesekt1/bank-microservice ./bank-microservice
-docker build -t pesekt1/consumer-microservice ./consumer-microservice
+docker build -t pesekt1/bank ./bank
+docker build -t pesekt1/transaction-processing ./transaction-processing
 ```
 
 Push images to dockerhub:
 ```bash
-docker push pesekt1/bank-microservice
-docker push pesekt1/consumer-microservice
+docker push pesekt1/bank
+docker push pesekt1/transaction-processing
 
 ```
 
@@ -142,3 +142,10 @@ NOTE: KEDA uses a default pollingInterval 30sec and cooldownPeriod 60sec, that i
 Now the consumer microservice is scaled based on the rules defined in the scaleobject.yaml.
 We can observe the results in RabbitMQ – we can see the number of consumers, consumed messages, messages in the queue, etc.
  
+
+ # Useful commands
+
+Remove all dangling images:
+```bash
+ docker images -f "dangling=true" -q | xargs docker rmi
+```

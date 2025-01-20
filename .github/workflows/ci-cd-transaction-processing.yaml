@@ -1,11 +1,11 @@
-name: Deploy Consumer Microservice to Local Kubernetes
+name: Deploy Transaction processing microservice to Local Kubernetes
 
 on:
   push:
     branches:
       - main
     paths:
-      - "consumer-microservice/**" # Trigger if files in consumer-microservice/ folder change
+      - "transaction-processing/**" # Trigger if files in transaction-processing/ folder change
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 
@@ -23,8 +23,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
 
-      # Build and push Docker image for consumer-microservice
-      - name: Build and push Docker image for consumer-microservice
+      # Build and push Docker image for transaction-processing microservice
+      - name: Build and push Docker image for transaction-processing microservice
         run: |
-          docker build -t pesekt1/consumer-microservice:latest ./consumer-microservice
-          docker push pesekt1/consumer-microservice:latest
+          docker build -t pesekt1/transaction-processing:latest ./transaction-processing
+          docker push pesekt1/transaction-processing:latest

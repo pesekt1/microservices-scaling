@@ -49,7 +49,7 @@ const Transaction = sequelize.define("Transaction", {
 // for simulating processing delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function startConsumer() {
+async function processing() {
   try {
     await sequelize.sync(); // means drop all tables and recreate them
     //await sequelize.sync({ force: true }); // means drop all tables and recreate them
@@ -86,15 +86,15 @@ async function startConsumer() {
       { noAck: false }
     ); // Ensure manual acknowledgment is enabled
 
-    console.log("Consumer microservice is running...");
+    console.log("Transaction processing microservice is running...");
   } catch (error) {
-    console.error("Error in Consumer microservice:", error);
+    console.error("Transaction processing microservice:", error);
   }
 }
 
-// Call the startConsumer function
-startConsumer();
+// Call the processing function
+processing();
 
 app.listen(PORT, () => {
-  console.log(`Consumer service listening on port ${PORT}`);
+  console.log(`Transaction processing service listening on port ${PORT}`);
 });

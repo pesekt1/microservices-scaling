@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "bank-microservice/**" # Trigger if files in bank-microservice/ folder change
+      - "bank/**" # Trigger if files in bank/ folder change
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 
@@ -23,8 +23,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
 
-      # Build and push Docker image for bank-microservice
-      - name: Build and push Docker image for bank-microservice
+      # Build and push Docker image for bank microservice
+      - name: Build and push Docker image for bank microservice
         run: |
-          docker build -t pesekt1/bank-microservice:latest ./bank-microservice
-          docker push pesekt1/bank-microservice:latest
+          docker build -t pesekt1/bank:latest ./bank
+          docker push pesekt1/bank:latest

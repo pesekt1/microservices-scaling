@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bank-microservice
+  name: bank
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bank-microservice
+      app: bank
   template:
     metadata:
       labels:
-        app: bank-microservice
+        app: bank
     spec:
       containers:
-      - name: bank-microservice
-        image: pesekt1/bank-microservice:latest
+      - name: bank
+        image: pesekt1/bank:latest
         ports:
         - containerPort: 3000
         env:

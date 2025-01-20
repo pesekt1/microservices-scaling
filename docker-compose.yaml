@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -24,10 +22,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  bank-microservice:
+  bank:
     build:
-      context: ./bank-microservice
-    container_name: bank-microservice
+      context: ./bank
+      dockerfile: Dockerfile
+    image: pesekt1/bank:latest
     depends_on:
       - rabbitmq
     ports:
@@ -38,11 +37,13 @@ services:
       QUEUE_NAME: bankPackets
       MESSAGE_SPEED: 1000
 
-  consumer-microservice:
+  transaction-processing:
     build:
-      context: ./consumer-microservice
+      context: ./transaction-processing
+      dockerfile: Dockerfile
+    image: pesekt1/transaction-processing:latest
     #removed the name because of scaling
-    #container_name: consumer-microservice
+    #container_name: transaction-processing
     depends_on:
       - rabbitmq
       - mysql

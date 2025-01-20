@@ -1,4 +1,4 @@
-- Create a release branch of the current code and push it to the repository
+- improve the docker-compose - create proper networking
 - Integrate prometheus with graphana to show the metrics in a dashboard
 - Create an event in MySQL to delete all data from transactions table every 60min - otherwise it just accumulates.
 - Create a frontend for the consumer

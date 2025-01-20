@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consumer-microservice
+  name: transaction-processing
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consumer-microservice
+      app: transaction-processing
   template:
     metadata:
       labels:
-        app: consumer-microservice
+        app: transaction-processing
     spec:
       containers:
-      - name: consumer-microservice
-        image: pesekt1/consumer-microservice:latest
+      - name: transaction-processing
+        image: pesekt1/transaction-processing:latest
         imagePullPolicy: Always # Ensures the latest image is always pulled
         ports:
         - containerPort: 3001

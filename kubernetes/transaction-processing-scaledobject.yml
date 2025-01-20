@@ -1,11 +1,11 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: consumer-microservice-scaledobject
+  name: transaction-processing-scaledobject
   namespace: default
 spec:
   scaleTargetRef:
-    name: consumer-microservice
+    name: transaction-processing
   minReplicaCount: 1
   maxReplicaCount: 10
   pollingInterval: 30  # Polling interval in seconds
