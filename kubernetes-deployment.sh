@@ -3,10 +3,10 @@
 #################################
 
 # Run:
-#bash kubernetes-deployment.sh
+# bash kubernetes-deployment.sh
 
 # To delete all deployments and port forwarding processes, run:
-#bash kubernetes-deployment.sh --delete
+# bash kubernetes-deployment.sh --delete
 
 ###############################
 
