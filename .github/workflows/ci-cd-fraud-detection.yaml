@@ -26,5 +26,5 @@ jobs:
       # Build and push Docker image for fraud-detection microservice
       - name: Build and push Docker image for fraud-detection microservice
         run: |
-          docker build -t pesekt1/fraud-detection:latest ./bank
+          docker build -t pesekt1/fraud-detection:latest ./fraud-detection
           docker push pesekt1/fraud-detection:latest
