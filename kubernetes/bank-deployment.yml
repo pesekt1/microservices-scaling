@@ -19,10 +19,9 @@ spec:
         - containerPort: 3002
         env:
         - name: PORT
-          value: "3000"
-        - name: RABBITMQ_URL
-          value: "amqp://rabbitmq"
-        - name: QUEUE_NAME
-          value: "bankPackets"
+          value: "3002"
         - name: MESSAGE_SPEED
           value: "1000"
+        - name: API_URL
+          value: http://transaction-receiver:3000/transactions
+

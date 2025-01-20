@@ -24,8 +24,8 @@ spec:
         - name: RABBITMQ_URL
           value: "amqp://rabbitmq"
         - name: QUEUE_NAME
-          value: "bankPackets"
+          value: "transactionPayloads"
         - name: DATABASE_URL
-          value: "mysql://user:password@mysql:3306/bank_db"
+          value: "mysql://user:password@mysql:3306/transactions_db"
         - name: MESSAGE_PROCESSING_SPEED
           value: "3000"
