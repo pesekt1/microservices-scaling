@@ -33,7 +33,8 @@ if [ "$1" == "--delete" ]; then
   echo "Killing any existing port forwarding processes..."
   kill_port_forwarding
   echo "Deleting all existing deployments..."
-  kubectl delete -f kubernetes/
+  # Delete all deployments from kubernetes directory and subdirectories
+  kubectl delete -R -f kubernetes/
   echo "All deployments deleted."
   exit 0
 fi
@@ -50,9 +51,9 @@ else
   echo "KEDA is already installed."
 fi
 
-# Apply all Kubernetes configurations from the directory
+# Apply all Kubernetes configurations from the directory and subdirectories
 echo "Applying Kubernetes configurations..."
-kubectl apply -f kubernetes/
+kubectl apply -R -f kubernetes/
 
 # Wait for the RabbitMQ exporter service pod to be ready
 wait_for_pod "app=rabbitmq-exporter"
