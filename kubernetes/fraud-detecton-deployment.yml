@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fraud-detection
+  template:
+    metadata:
+      labels:
+        app: fraud-detection
+    spec:
+      containers:
+      - name: fraud-detection
+        image: pesekt1/fraud-detection:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3003"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq"
+        - name: INPUT_QUEUE_NAME
+          value: "transactionPayloads"
+        - name: SUSPICIOUS_QUEUE_NAME
+          value: "suspiciousTransactions"
+        - name: ACCEPTED_QUEUE_NAME
+          value: "acceptedTransactions"
+        - name: MESSAGE_SPEED
+          value: "1000"
