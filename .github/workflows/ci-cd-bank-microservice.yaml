@@ -1,0 +1,30 @@
+name: Deploy Bank Microservice to Local Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "bank-microservice/**" # Trigger if files in bank-microservice/ folder change
+
+  workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
+          password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
+
+      # Build and push Docker image for bank-microservice
+      - name: Build and push Docker image for bank-microservice
+        run: |
+          docker build -t pesekt1/bank-microservice:latest ./bank-microservice
+          docker push pesekt1/bank-microservice:latest

@@ -23,4 +23,4 @@ EXPOSE 3000
 # Start the application
 #CMD ["npm", "start"]
 # Run the application with the wait-for-it.sh script, set the timeout to 60 seconds
-CMD ["./wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "npm", "start"]
+CMD ["sh", "/wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "npm", "start"]

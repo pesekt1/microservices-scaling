@@ -1,11 +1,10 @@
-name: Deploy to Local Kubernetes
+name: Deploy Consumer Microservice to Local Kubernetes
 
 on:
   push:
     branches:
       - main
     paths:
-      - "bank-microservice/**" # Trigger if files in bank-microservice/ folder change
       - "consumer-microservice/**" # Trigger if files in consumer-microservice/ folder change
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
@@ -23,12 +22,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
-
-      # Build and push Docker image for bank-microservice
-      - name: Build and push Docker image for bank-microservice
-        run: |
-          docker build -t pesekt1/bank-microservice:latest ./bank-microservice
-          docker push pesekt1/bank-microservice:latest
 
       # Build and push Docker image for consumer-microservice
       - name: Build and push Docker image for consumer-microservice

@@ -37,10 +37,10 @@ The proper way to scale microservices is to use an orchestration tool like Kuber
 
 Kubernetes needs a container registry to pull images from.
 
-Create docker images and push them to your dockerhub (run from each microservice folder):
+Create docker images and push them to your dockerhub:
 ```bash
-docker build -t pesekt1/bank-microservice .
-docker build -t pesekt1/consumer-microservice .
+docker build -t pesekt1/bank-microservice ./bank-microservice
+docker build -t pesekt1/consumer-microservice ./consumer-microservice
 ```
 
 Push images to dockerhub:
