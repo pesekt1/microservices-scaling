@@ -23,4 +23,4 @@ EXPOSE 3001
 # Start the application
 #CMD ["npm", "start"]
 # Start the application with increased timeout using the wait-for-it.sh script
-CMD ["sh", "/wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "./wait-for-it.sh", "mysql:3306", "-t", "60", "--", "npm", "start"]
+CMD ["sh", "/wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "sh", "/wait-for-it.sh", "mysql:3306", "-t", "60", "--", "npm", "start"]
