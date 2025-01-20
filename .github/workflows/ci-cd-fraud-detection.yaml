@@ -1,0 +1,30 @@
+name: Deploy Fraud Detection Microservice to Local Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "fraud-detection/**" # Trigger if files in fraud-detection/ folder change
+
+  workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
+          password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
+
+      # Build and push Docker image for fraud-detection microservice
+      - name: Build and push Docker image for fraud-detection microservice
+        run: |
+          docker build -t pesekt1/fraud-detection:latest ./bank
+          docker push pesekt1/fraud-detection:latest
