@@ -7,6 +7,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: "/mnt/data" # Change this to a suitable path on your host
 

@@ -1,3 +1,4 @@
+- Explore other metrics for scaling - for example pod CPU usage, etc.
 - Find a better way to work with repetitive env variables in docker-compose and kubernetes manifests. For example, if I change a queue name I would like to change it in a single place.
 - improve the docker-compose - create proper networking
 - Integrate prometheus with graphana to show the metrics in a dashboard

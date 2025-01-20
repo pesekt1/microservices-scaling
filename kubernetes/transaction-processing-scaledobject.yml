@@ -15,5 +15,5 @@ spec:
     metadata:
       serverAddress: http://prometheus.default.svc.cluster.local:9090
       metricName: rabbitmq_queue_messages
-      query: avg(rabbitmq_queue_messages{queue="TransactionPayloads"})
+      query: avg(rabbitmq_queue_messages{queue="transactionPayloads"})
       threshold: '20'
