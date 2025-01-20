@@ -1,0 +1,30 @@
+name: Deploy Transaction receiver microservice to Local Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "transaction-receiver/**" # Trigger if files in transaction-receiver/ folder change
+
+  workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
+          password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
+
+      # Build and push Docker image for transaction-receiver microservice
+      - name: Build and push Docker image for transaction-receiver microservice
+        run: |
+          docker build -t pesekt1/transaction-receiver:latest ./transaction-receiver
+          docker push pesekt1/transaction-receiver:latest
