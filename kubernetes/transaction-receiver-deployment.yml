@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bank
+  name: transaction-receiver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bank
+      app: transaction-receiver
   template:
     metadata:
       labels:
-        app: bank
+        app: transaction-receiver
     spec:
       containers:
-      - name: bank
-        image: pesekt1/bank:latest
+      - name: transaction-receiver
+        image: pesekt1/transaction-receiver:latest
         ports:
-        - containerPort: 3002
+        - containerPort: 3000
         env:
         - name: PORT
           value: "3000"
         - name: RABBITMQ_URL
           value: "amqp://rabbitmq"
         - name: QUEUE_NAME
-          value: "bankPackets"
+          value: "transactionPayloads"
         - name: MESSAGE_SPEED
           value: "1000"

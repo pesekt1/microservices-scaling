@@ -18,9 +18,7 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 3002
 
 # Start the application
-#CMD ["npm", "start"]
-# Run the application with the wait-for-it.sh script, set the timeout to 60 seconds
-CMD ["sh", "/wait-for-it.sh", "rabbitmq:5672", "-t", "60", "--", "npm", "start"]
+CMD ["npm", "start"]
