@@ -22,7 +22,7 @@ docker-compose down
 
 ### How to scale a service running in docker-compose:
 ```bash
-docker-compose up --scale service_name=3
+docker-compose up --scale service_name=3 -d
 ```
 
 ## Scaling in docker-compose:

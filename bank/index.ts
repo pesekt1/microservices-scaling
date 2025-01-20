@@ -1,41 +1,39 @@
 import express from "express";
-import amqplib from "amqplib";
+import axios from "axios";
 import { faker } from "@faker-js/faker";
-import "dotenv";
+import "dotenv/config";
 
 const app = express();
 const PORT = process.env.PORT;
-const RABBITMQ_URL = process.env.RABBITMQ_URL as string;
-const QUEUE_NAME = process.env.QUEUE_NAME as string;
+const API_URL = process.env.API_URL as string;
 const MESSAGE_SPEED = parseInt(process.env.MESSAGE_SPEED as string);
 
-async function startProducer() {
+async function generateAndSendTransactions() {
   try {
-    const connection = await amqplib.connect(RABBITMQ_URL);
-    const channel = await connection.createChannel();
-    await channel.assertQueue(QUEUE_NAME);
-    console.log("Connected to RabbitMQ and queue asserted!");
-
     // Send a message every MESSAGE_SPEED milliseconds
-    setInterval(() => {
-      const dataPacket = {
+    setInterval(async () => {
+      const transactionPayload = {
         accountId: faker.string.uuid(),
         amount: faker.finance.amount(),
         currency: faker.finance.currencyCode(),
         timestamp: new Date().toISOString(),
       };
 
-      channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(dataPacket)));
-      console.log("Sent:", dataPacket);
+      try {
+        const response = await axios.post(API_URL, transactionPayload);
+        console.log("Sent:", transactionPayload, "Response:", response.status);
+      } catch (error) {
+        console.error("Error sending transaction to API:", error);
+      }
     }, MESSAGE_SPEED);
 
     console.log("Bank service is running...");
   } catch (error) {
-    console.error("RabbitMQ error:", error);
+    console.error("Error in Bank service:", error);
   }
 }
 
-startProducer().catch((err) => {
+generateAndSendTransactions().catch((err) => {
   console.error("Error in Bank service:", err);
 });
 

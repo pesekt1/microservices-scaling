@@ -1,4 +1,4 @@
-# Bank microservice
+# Bank microservice - simulates incoming transaction payloads from a bank
 ```
 Needs .env file:
 PORT = 3000

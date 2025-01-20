@@ -16,7 +16,7 @@ services:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: bank_db
+      MYSQL_DATABASE: transactions_db
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:
@@ -27,15 +27,25 @@ services:
       context: ./bank
       dockerfile: Dockerfile
     image: pesekt1/bank:latest
+    # removed the port mapping because of scaling
+    # ports:
+    #   - "3002:3002"
+    environment:
+      PORT: 3002
+      MESSAGE_SPEED: 1000
+      API_URL: http://transaction-receiver:3000/transactions
+
+  transaction-receiver:
+    build:
+      context: ./transaction-receiver
+      dockerfile: Dockerfile
+    image: pesekt1/transaction-receiver:latest
     depends_on:
       - rabbitmq
-    ports:
-      - "3000:3000"
     environment:
       PORT: 3000
       RABBITMQ_URL: amqp://rabbitmq
-      QUEUE_NAME: bankPackets
-      MESSAGE_SPEED: 1000
+      QUEUE_NAME: transactionPayloads
 
   transaction-processing:
     build:
@@ -53,8 +63,8 @@ services:
     environment:
       PORT: 3001
       RABBITMQ_URL: amqp://rabbitmq
-      QUEUE_NAME: bankPackets
-      DATABASE_URL: mysql://user:password@mysql:3306/bank_db
+      QUEUE_NAME: transactionPayloads
+      DATABASE_URL: mysql://user:password@mysql:3306/transactions_db
       MESSAGE_PROCESSING_SPEED: 3000
 
 volumes:
