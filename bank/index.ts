@@ -8,7 +8,7 @@ const PORT = process.env.PORT;
 const API_URL = process.env.API_URL as string;
 const MESSAGE_SPEED = parseInt(process.env.MESSAGE_SPEED as string);
 
-async function generateAndSendTransactions() {
+export async function generateAndSendTransactions() {
   try {
     // Send a message every MESSAGE_SPEED milliseconds
     setInterval(async () => {
