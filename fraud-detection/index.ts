@@ -1,5 +1,6 @@
 import express from "express";
 import amqplib from "amqplib";
+import { faker } from "@faker-js/faker";
 import "dotenv/config";
 
 const app = express();
@@ -33,7 +34,7 @@ async function initializeMessageQueue() {
           const suspiciousData = {
             ...data,
             flaggedAt: new Date().toISOString(),
-            reason: "Suspicious transaction",
+            reason: faker.lorem.paragraphs(2), // Generate a long random description
           };
 
           channel.sendToQueue(
