@@ -1,4 +1,4 @@
-name: Deploy Fraud Detection Microservice to Local Kubernetes
+name: Fraud Detection Microservice - Build, Test, Push image to Docker Hub
 
 on:
   push:

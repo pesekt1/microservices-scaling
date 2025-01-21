@@ -1,4 +1,4 @@
-name: Deploy Transaction receiver microservice to Local Kubernetes
+name: Transaction receiver microservice - Build, Test, Push image to Docker Hub
 
 on:
   push:

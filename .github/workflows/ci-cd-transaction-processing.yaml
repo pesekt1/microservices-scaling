@@ -1,4 +1,4 @@
-name: Deploy Transaction processing microservice to Local Kubernetes
+name: Transaction processing microservice - Build, Test, Push image to Docker Hub
 
 on:
   push:
