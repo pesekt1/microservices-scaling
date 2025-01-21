@@ -26,6 +26,11 @@ jobs:
         run: npm install
         working-directory: ./bank
 
+      - name: Set environment variables
+        run: |
+          echo "API_URL=http://transaction-receiver:3000/transactions" >> $GITHUB_ENV
+          echo "MESSAGE_SPEED=1000" >> $GITHUB_ENV
+
       - name: Run unit tests
         run: npm test
         working-directory: ./bank
