@@ -1,3 +1,6 @@
+// Simulates fluctuating speed of sending transactions to the API
+// Adjusts the speed every 2 minutes
+
 import express from "express";
 import axios from "axios";
 import { faker } from "@faker-js/faker";
@@ -7,11 +10,12 @@ const app = express();
 const PORT = process.env.PORT;
 const API_URL = process.env.API_URL as string;
 const MESSAGE_SPEED = parseInt(process.env.MESSAGE_SPEED as string);
+let currentMessageSpeed = MESSAGE_SPEED;
+let intervalId: NodeJS.Timeout;
 
 export async function generateAndSendTransactions() {
   try {
-    // Send a message every MESSAGE_SPEED milliseconds
-    setInterval(async () => {
+    const sendTransaction = async () => {
       const transactionPayload = {
         accountId: faker.string.uuid(),
         amount: faker.finance.amount(),
@@ -25,7 +29,20 @@ export async function generateAndSendTransactions() {
       } catch (error) {
         console.error("Error sending transaction to API:", error);
       }
-    }, MESSAGE_SPEED);
+    };
+
+    const adjustMessageSpeed = () => {
+      const factor = Math.random() * 0.5 + 0.5; // Random number between 0.5 and 1
+      currentMessageSpeed = Math.floor(MESSAGE_SPEED * factor);
+      console.log(`Adjusted MESSAGE_SPEED to ${currentMessageSpeed}ms`);
+
+      clearInterval(intervalId);
+      intervalId = setInterval(sendTransaction, currentMessageSpeed);
+    };
+
+    intervalId = setInterval(sendTransaction, currentMessageSpeed);
+
+    setInterval(adjustMessageSpeed, 2 * 60 * 1000); // Adjust MESSAGE_SPEED every 2 minutes
 
     console.log("Bank service is running...");
   } catch (error) {
