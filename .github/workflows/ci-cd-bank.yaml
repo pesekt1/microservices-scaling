@@ -1,4 +1,4 @@
-name: Deploy Bank Microservice to Local Kubernetes
+name: Build, test and push Docker image for bank microservice to Docker Hub
 
 on:
   push:
@@ -16,6 +16,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./bank
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: ./bank
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
