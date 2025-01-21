@@ -4,10 +4,11 @@
 - improve the docker-compose - create proper networking
 - Integrate prometheus with graphana to show the metrics in a dashboard
 - Create an event in MySQL to delete all data from transactions table every 60min - otherwise it just accumulates.
-- Create a frontend for the consumer
 - Show rolling updates in Kubernetes: 
   - We need a CI/CD pipeline that creates a latest docker image and pushes it to Dockerhub. 
   - Then we need to run kubernetes deployment job.
-  - We can set Kubernetes for rolling updates so the consumer replicas will be updated one at the time.
+  - We can set Kubernetes for rolling updates so the microservice replicas will be updated one at the time.
   - There should also be some testing but we can do it later
-- Add a fraud detection microservice that will check if the transaction is fraudulent. It will add status and reason. It will send the processed messages to new queues: save-transaction and fraud-transaction.
+- Should there be a gateway - like Kong API?
+- tilt + K3d - kubernetes hot reloading - like docker-compose volumes on source code
+- helm charts - set up base yaml for service and deployment which can be reused by dynamically setting the values
