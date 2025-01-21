@@ -30,11 +30,17 @@ async function initializeMessageQueue() {
         const isSuspicious = Math.random() < 0.05; // 5% chance of being suspicious
 
         if (isSuspicious) {
+          const suspiciousData = {
+            ...data,
+            flaggedAt: new Date().toISOString(),
+            reason: "Suspicious transaction",
+          };
+
           channel.sendToQueue(
             SUSPICIOUS_QUEUE_NAME,
-            Buffer.from(JSON.stringify(data))
+            Buffer.from(JSON.stringify(suspiciousData))
           );
-          console.log("Sent to suspicious queue:", data);
+          console.log("Sent to suspicious queue:", suspiciousData);
         } else {
           channel.sendToQueue(
             ACCEPTED_QUEUE_NAME,
