@@ -1,6 +1,10 @@
 #!/bin/bash
 
 #################################
+# Kubernetes Deployment Script  #
+# Script to deploy all Kubernetes configurations and start port forwarding for RabbitMQ-exporter and Prometheus services.
+# Script also deploys the bank service as a Docker container outside of Kubernetes cluster.
+#################################
 
 # Run:
 # bash kubernetes-deployment.sh
@@ -33,8 +37,10 @@ if [ "$1" == "--delete" ]; then
   echo "Killing any existing port forwarding processes..."
   kill_port_forwarding
   echo "Deleting all existing deployments..."
-  # Delete all deployments from kubernetes directory and subdirectories
   kubectl delete -R -f kubernetes/
+  echo "Stopping the bank service Docker container..."
+  docker stop bank-service
+  docker rm bank-service
   echo "All deployments deleted."
   exit 0
 fi
@@ -51,7 +57,7 @@ else
   echo "KEDA is already installed."
 fi
 
-# Apply all Kubernetes configurations from the directory and subdirectories
+# Apply all Kubernetes configurations from the directory recursively
 echo "Applying Kubernetes configurations..."
 kubectl apply -R -f kubernetes/
 
@@ -72,6 +78,26 @@ kubectl port-forward svc/prometheus 9090:9090 > /dev/null 2>&1 &
 PROMETHEUS_PORT_FORWARD_PID=$!
 echo $PROMETHEUS_PORT_FORWARD_PID >> port_forward_pids.txt
 echo "Port forwarding for prometheus-service set up on port 9090."
+
+# Check if the bank service Docker image has been updated
+echo "Checking if the bank service Docker image has been updated..."
+LOCAL_IMAGE_ID=$(docker images -q pesekt1/bank:latest)
+REMOTE_IMAGE_ID=$(docker inspect --format='{{.Id}}' pesekt1/bank:latest)
+
+if [ "$LOCAL_IMAGE_ID" != "$REMOTE_IMAGE_ID" ]; then
+  echo "Pulling the latest Docker image for the bank service..."
+  docker pull pesekt1/bank:latest
+else
+  echo "The bank service Docker image is up to date."
+fi
+
+# Run the bank service as a Docker container with host network mode
+echo "Starting the bank service Docker container..."
+docker run -d --name bank-service --network host \
+  -e PORT=3002 \
+  -e MESSAGE_SPEED=1000 \
+  -e API_URL=http://localhost:32000/transactions \
+  pesekt1/bank:latest
 
 # Detach the script to keep port forwarding running
 disown
