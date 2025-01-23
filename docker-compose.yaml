@@ -1,3 +1,5 @@
+# We dont need volumes for MySQL because data would just accumulate.
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -8,6 +10,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - rabbitmq-net
 
   mysql:
     image: mysql:8.0
@@ -19,21 +23,23 @@ services:
       MYSQL_DATABASE: transactions_db
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-    volumes:
-      - mysql_data:/var/lib/mysql
+    # We dont need volumes
+    # volumes:
+    #   - mysql_data:/var/lib/mysql
+    networks:
+      - mysql-net
 
   bank:
     build:
       context: ./bank
       dockerfile: Dockerfile
     image: pesekt1/bank:latest
-    # removed the port mapping because of scaling
-    # ports:
-    #   - "3002:3002"
     environment:
       PORT: 3002
       MESSAGE_SPEED: 1000
       API_URL: http://transaction-receiver:3000/transactions
+    networks:
+      - public-net
 
   transaction-receiver:
     build:
@@ -46,6 +52,9 @@ services:
       PORT: 3000
       RABBITMQ_URL: amqp://rabbitmq
       QUEUE_NAME: transactionPayloads
+    networks:
+      - public-net
+      - rabbitmq-net
 
   fraud-detection:
     build:
@@ -60,6 +69,8 @@ services:
       INPUT_QUEUE_NAME: transactionPayloads
       ACCEPTED_QUEUE_NAME: acceptedTransactions
       SUSPICIOUS_QUEUE_NAME: suspiciousTransactions
+    networks:
+      - rabbitmq-net
 
   transaction-processing:
     build:
@@ -80,6 +91,14 @@ services:
       QUEUE_NAME: acceptedTransactions
       DATABASE_URL: mysql://user:password@mysql:3306/transactions_db
       MESSAGE_PROCESSING_SPEED: 3000
+    networks:
+      - rabbitmq-net
+      - mysql-net
 
-volumes:
-  mysql_data:
+# volumes:
+#   mysql_data:
+
+networks:
+  public-net:
+  rabbitmq-net:
+  mysql-net:
