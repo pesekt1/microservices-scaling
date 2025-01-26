@@ -1,0 +1,1 @@
+- system test for ci-cd-transaction-receiver is not working. The fraud-detection microservice is not publishing the message on one of the 2 queues.

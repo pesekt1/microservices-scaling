@@ -26,6 +26,7 @@
     "amqplib": "^0.10.5",
     "dotenv": "^16.4.1",
     "express": "^4.21.2",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "winston": "^3.17.0"
   }
 }

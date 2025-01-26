@@ -46,6 +46,9 @@ services:
       context: ./transaction-receiver
       dockerfile: Dockerfile
     image: pesekt1/transaction-receiver:latest
+    volumes:
+      - /var/log/transaction-receiver:/var/log/transaction-receiver
+      # Map its logs to a directory Promtail can access
     depends_on:
       - rabbitmq
     environment:
@@ -95,7 +98,38 @@ services:
       - rabbitmq-net
       - mysql-net
 
-# volumes:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-data:/tmp/loki
+    environment:
+      - LOKI_CONFIG_FILE=/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:2.9.1
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+      - /var/log/transaction-receiver:/var/log/transaction-receiver
+    command: -config.file=/etc/promtail/config.yaml
+
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  loki-data:
 #   mysql_data:
 
 networks:

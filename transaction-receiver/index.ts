@@ -1,5 +1,6 @@
 import express from "express";
 import amqplib from "amqplib";
+import logger from "./logger";
 import "dotenv/config";
 
 const app = express();
@@ -63,4 +64,38 @@ initializeMessageQueue().catch((err) => {
 
 app.listen(PORT, () => {
   console.log(`Transaction receiver service listening on port ${PORT}`);
+
+  logger.info("Microservice started successfully.", {
+    service: "transaction-receiver",
+  });
+
+  try {
+    logger.info("Processing a transaction...", {
+      service: "transaction-receiver",
+    });
+
+    // Simulate successful transaction
+    const result = 10 / 2;
+    logger.info(`Transaction processed successfully: Result = ${result}`, {
+      service: "transaction-receiver",
+    });
+
+    // Simulate an error
+    logger.info("Processing another transaction...", {
+      service: "transaction-receiver",
+    });
+    throw new Error("Simulated error");
+    //const errorResult = 10 / 0; // Simulated divide-by-zero error
+    // logger.info(`Transaction processed successfully: Result = ${errorResult}`, {
+    //   service: "transaction-receiver",
+    // });
+  } catch (error) {
+    logger.error(`Exception occurred: ${(error as Error).message}`, {
+      service: "transaction-receiver",
+      stack: (error as Error).stack,
+    });
+  }
+
+  logger.warn("This is a warning.", { service: "transaction-receiver" });
+  logger.debug("This is a debug message.", { service: "transaction-receiver" });
 });
