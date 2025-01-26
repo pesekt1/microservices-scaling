@@ -48,17 +48,6 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
-      fraud-detection:
-        image: pesekt1/fraud-detection:latest
-        options: --name fraud-detection
-        ports:
-          - 3003:3003
-        env:
-          PORT: 3003
-          RABBITMQ_URL: amqp://rabbitmq
-          INPUT_QUEUE_NAME: transactionPayloads
-          ACCEPTED_QUEUE_NAME: acceptedTransactions
-          SUSPICIOUS_QUEUE_NAME: suspiciousTransactions
 
     steps:
       - name: Checkout code
@@ -68,6 +57,20 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "20"
+
+      - name: Pull fraud-detection Docker image
+        run: |
+          docker pull pesekt1/fraud-detection:latest
+
+          - name: Run fraud-detection service
+          run: |
+            docker run -d --name fraud-detection -p 3003:3003 --network host \
+              -e PORT=3003 \
+              -e RABBITMQ_URL=amqp://rabbitmq \
+              -e INPUT_QUEUE_NAME=transactionPayloads \
+              -e ACCEPTED_QUEUE_NAME=acceptedTransactions \
+              -e SUSPICIOUS_QUEUE_NAME=suspiciousTransactions \
+              pesekt1/fraud-detection:latest
 
       - name: Install dependencies
         run: |
