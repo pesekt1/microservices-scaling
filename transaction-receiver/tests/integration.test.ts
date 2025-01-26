@@ -22,8 +22,8 @@ describe("Transaction Receiver Microservice", () => {
     process.env.PORT = "3010";
     connection = await amqplib.connect(RABBITMQ_URL);
     channel = await connection.createChannel();
-    await channel.purgeQueue(QUEUE_NAME);
     await channel.assertQueue(QUEUE_NAME);
+    await channel.purgeQueue(QUEUE_NAME);
   });
 
   afterAll(async () => {
