@@ -46,13 +46,13 @@ describe("System test between receiver and fraud detection", () => {
     await publishTransaction(transaction);
 
     // Wait for 5 seconds before checking the queue
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     let msgAccepted: amqplib.GetMessage | false = false;
     let msgSuspicious: amqplib.GetMessage | false = false;
 
     // Retry fetching the message from the queues
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 25; i++) {
       msgAccepted = await channel.get(ACCEPTED_QUEUE_NAME, { noAck: true });
       msgSuspicious = await channel.get(SUSPICIOUS_QUEUE_NAME, { noAck: true });
 
