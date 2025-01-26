@@ -11,16 +11,18 @@ describe("Transaction Receiver Microservice", () => {
 
   beforeAll(async () => {
     // Initialize the message queue
-    await initializeMessageQueue();
+    // await initializeMessageQueue();
     //purge the queue
-    amqplib.connect(RABBITMQ_URL).then(async (conn) => {
-      const ch = await conn.createChannel();
-      await ch.purgeQueue(QUEUE_NAME);
-    });
+    // amqplib.connect(RABBITMQ_URL).then(async (conn) => {
+    //   const ch = await conn.createChannel();
+    //   await ch.purgeQueue(QUEUE_NAME);
+    // });
 
     // Connect to RabbitMQ
+    process.env.PORT = "3010";
     connection = await amqplib.connect(RABBITMQ_URL);
     channel = await connection.createChannel();
+    await channel.purgeQueue(QUEUE_NAME);
     await channel.assertQueue(QUEUE_NAME);
   });
 

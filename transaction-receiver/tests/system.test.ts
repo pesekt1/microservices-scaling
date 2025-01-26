@@ -13,18 +13,19 @@ describe("System test between receiver and fraud detection", () => {
 
   beforeAll(async () => {
     // Initialize the message queue
-    await initializeMessageQueue();
+    // await initializeMessageQueue();
     // Connect to RabbitMQ
+    process.env.PORT = "30011";
     connection = await amqplib.connect(RABBITMQ_URL);
     channel = await connection.createChannel();
 
     // Purge the queues and assert them
-    await channel.purgeQueue(QUEUE_NAME);
-    await channel.purgeQueue(ACCEPTED_QUEUE_NAME);
-    await channel.purgeQueue(SUSPICIOUS_QUEUE_NAME);
     await channel.assertQueue(QUEUE_NAME);
     await channel.assertQueue(ACCEPTED_QUEUE_NAME);
     await channel.assertQueue(SUSPICIOUS_QUEUE_NAME);
+    await channel.purgeQueue(QUEUE_NAME);
+    await channel.purgeQueue(ACCEPTED_QUEUE_NAME);
+    await channel.purgeQueue(SUSPICIOUS_QUEUE_NAME);
   });
 
   afterAll(async () => {

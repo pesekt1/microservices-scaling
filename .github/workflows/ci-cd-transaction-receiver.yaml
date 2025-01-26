@@ -10,7 +10,7 @@ on:
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 
 jobs:
-  build-and-push:
+  integration-tests:
     runs-on: ubuntu-latest
 
     services:
@@ -19,10 +19,7 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
-      fraud-detection:
-        image: pesekt1/fraud-detection:latest
-        ports:
-          - 3003:3003
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -42,13 +39,53 @@ jobs:
           cd transaction-receiver
           npm test
 
+  system-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      fraud-detection:
+        image: pesekt1/fraud-detection:latest
+        ports:
+          - 3003:3003
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          cd transaction-receiver
+          npm install
+
+      - name: Run system tests
+        run: |
+          cd transaction-receiver/tests
+          npx vitest run system.test.ts
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [integration-tests, system-tests]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }} # Store your Docker Hub username in GitHub Secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Store your Docker Hub password/token in GitHub Secrets
 
-      # Build and push Docker image for transaction-receiver microservice
       - name: Build and push Docker image for transaction-receiver microservice
         run: |
           docker build -t pesekt1/transaction-receiver:latest ./transaction-receiver
