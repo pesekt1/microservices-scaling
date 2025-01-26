@@ -50,6 +50,7 @@ jobs:
           - 15672:15672
       fraud-detection:
         image: pesekt1/fraud-detection:latest
+        options: --name fraud-detection
         ports:
           - 3003:3003
         env:
@@ -82,7 +83,7 @@ jobs:
         if: failure()
         run: |
           echo "Capturing fraud-detection logs..."
-          docker logs $(docker ps -q --filter "name=fraud-detection")
+          docker logs fraud-detection
 
   build-and-push:
     runs-on: ubuntu-latest
