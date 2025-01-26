@@ -62,7 +62,7 @@ jobs:
         run: |
           cd fraud-detection
           npm install
-          npm start
+          npm start &
 
       - name: Install dependencies
         run: |
