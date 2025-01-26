@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import amqplib from "amqplib";
-import { initializeMessageQueue, publishTransaction } from "./index"; // Adjust the import path as needed
-import exp from "constants";
+import { initializeMessageQueue, publishTransaction } from "../index";
 
 const RABBITMQ_URL = "amqp://localhost";
 const QUEUE_NAME = "transactionPayloads";
