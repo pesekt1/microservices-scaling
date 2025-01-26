@@ -29,6 +29,8 @@ jobs:
         with:
           node-version: "20"
 
+      # This is for winston logger to write logs to /var/log/transaction-receiver
+      # We dont need logging for test but it would fail if the directory does not exist
       - name: Create log directory
         run: |
           sudo mkdir -p /var/log/transaction-receiver
