@@ -52,6 +52,12 @@ jobs:
         image: pesekt1/fraud-detection:latest
         ports:
           - 3003:3003
+        env:
+          PORT: 3003
+          RABBITMQ_URL: amqp://rabbitmq
+          INPUT_QUEUE_NAME: transactionPayloads
+          ACCEPTED_QUEUE_NAME: acceptedTransactions
+          SUSPICIOUS_QUEUE_NAME: suspiciousTransactions
 
     steps:
       - name: Checkout code
@@ -66,20 +72,6 @@ jobs:
         run: |
           cd transaction-receiver
           npm install
-
-      - name: Wait for fraud-detection service to be ready
-        run: |
-          echo "Waiting for fraud-detection service to be ready..."
-          for i in {1..30}; do
-            if nc -z localhost 3003; then
-              echo "fraud-detection service is ready!"
-              exit 0
-            fi
-            echo "Waiting for fraud-detection service..."
-            sleep 5
-          done
-          echo "fraud-detection service did not become ready in time"
-          exit 1
 
       - name: Run system tests
         run: |
