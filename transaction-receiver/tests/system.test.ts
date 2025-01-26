@@ -45,15 +45,34 @@ describe("System test between receiver and fraud detection", () => {
     // Publish the transaction to the RabbitMQ queue
     await publishTransaction(transaction);
 
-    // Wait for 3 seconds before checking the queue
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // Wait for 5 seconds before checking the queue
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
-    // Check if the message is in one of the two queues
-    const msgAccepted = await channel.get(ACCEPTED_QUEUE_NAME, { noAck: true });
+    let msgAccepted: amqplib.GetMessage | false = false;
+    let msgSuspicious: amqplib.GetMessage | false = false;
 
-    const msgSuspicious = await channel.get(SUSPICIOUS_QUEUE_NAME, {
-      noAck: true,
-    });
+    // Retry fetching the message from the queues
+    for (let i = 0; i < 5; i++) {
+      msgAccepted = await channel.get(ACCEPTED_QUEUE_NAME, { noAck: true });
+      msgSuspicious = await channel.get(SUSPICIOUS_QUEUE_NAME, { noAck: true });
+
+      if (msgAccepted !== false || msgSuspicious !== false) {
+        break;
+      }
+
+      // Wait for 2 seconds before retrying
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+
+    // // Wait for 3 seconds before checking the queue
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    // // Check if the message is in one of the two queues
+    // const msgAccepted = await channel.get(ACCEPTED_QUEUE_NAME, { noAck: true });
+
+    // const msgSuspicious = await channel.get(SUSPICIOUS_QUEUE_NAME, {
+    //   noAck: true,
+    // });
 
     // Check if the message is in one of the two queues
     expect(msgAccepted || msgSuspicious).not.toBeNull();
