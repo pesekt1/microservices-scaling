@@ -1,3 +1,7 @@
+//Needs rabbitMQ to run
+//The microservices consuming the messages should NOT run
+// because we need to test if the message is in the queue
+
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import amqplib from "amqplib";
 import { initializeMessageQueue, publishTransaction } from "../index";

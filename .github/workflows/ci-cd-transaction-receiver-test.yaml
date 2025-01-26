@@ -58,19 +58,11 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Pull fraud-detection Docker image
+      - name: Install fraud-detection service
         run: |
-          docker pull pesekt1/fraud-detection:latest
-
-      - name: Run fraud-detection service
-        run: |
-          docker run -d --name fraud-detection -p 3003:3003 --network host \
-            -e PORT=3003 \
-            -e RABBITMQ_URL=amqp://rabbitmq \
-            -e INPUT_QUEUE_NAME=transactionPayloads \
-            -e ACCEPTED_QUEUE_NAME=acceptedTransactions \
-            -e SUSPICIOUS_QUEUE_NAME=suspiciousTransactions \
-            pesekt1/fraud-detection:latest
+          cd fraud-detection
+          npm install
+          npm start
 
       - name: Install dependencies
         run: |
