@@ -29,6 +29,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Create log directory
+        run: |
+          sudo mkdir -p /var/log/transaction-receiver
+          sudo chmod -R 777 /var/log/transaction-receiver
+
       - name: Install dependencies
         run: |
           cd transaction-receiver
