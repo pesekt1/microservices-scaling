@@ -1,0 +1,12 @@
+# We dont need volumes for MySQL because data would just accumulate.
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ protocol port
+      - "15672:15672" # RabbitMQ management console
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
