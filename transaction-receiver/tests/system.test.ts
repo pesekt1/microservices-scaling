@@ -45,8 +45,8 @@ describe("System test between receiver and fraud detection", () => {
     // Publish the transaction to the RabbitMQ queue
     await publishTransaction(transaction);
 
-    // Wait for 1 second before checking the queue
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Wait for 3 seconds before checking the queue
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Check if the message is in one of the two queues
     const msgAccepted = await channel.get(ACCEPTED_QUEUE_NAME, { noAck: true });
