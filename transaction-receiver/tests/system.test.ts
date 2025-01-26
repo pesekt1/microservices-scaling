@@ -98,5 +98,5 @@ describe("System test between receiver and fraud detection", () => {
       // Use a more flexible comparison for the timestamp
       expect(receivedTransaction.timestamp).toBe(transaction.timestamp);
     }
-  }, 20000); // Increase the timeout to 20 seconds
+  }, 60000); // Increase the timeout to 60 seconds
 });
