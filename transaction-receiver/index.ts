@@ -84,11 +84,7 @@ app.listen(PORT, () => {
     logger.info("Processing another transaction...", {
       service: "transaction-receiver",
     });
-    throw new Error("Simulated error");
-    //const errorResult = 10 / 0; // Simulated divide-by-zero error
-    // logger.info(`Transaction processed successfully: Result = ${errorResult}`, {
-    //   service: "transaction-receiver",
-    // });
+    throw new Error("Simulated error"); // Simulate an error
   } catch (error) {
     logger.error(`Exception occurred: ${(error as Error).message}`, {
       service: "transaction-receiver",
