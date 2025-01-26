@@ -15,7 +15,7 @@ describe("System test between receiver and fraud detection", () => {
     // Initialize the message queue
     // await initializeMessageQueue();
     // Connect to RabbitMQ
-    process.env.PORT = "30011";
+    process.env.PORT = "3011";
     connection = await amqplib.connect(RABBITMQ_URL);
     channel = await connection.createChannel();
 
