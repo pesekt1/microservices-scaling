@@ -45,12 +45,13 @@ jobs:
     services:
       rabbitmq:
         image: rabbitmq:3-management
+        options: --network test-network
         ports:
           - 5672:5672
           - 15672:15672
       fraud-detection:
         image: pesekt1/fraud-detection:latest
-        options: --name fraud-detection
+        options: --name fraud-detection --network test-network
         ports:
           - 3003:3003
         env:
