@@ -5,8 +5,9 @@ server:
 positions:
   filename: /tmp/positions.yaml
 
+# Integration with Grafana Loki:
 clients:
-  - url: http://loki:3100/loki/api/v1/push
+  - url: http://loki:3100/loki/api/v1/push # URL of Loki server
 
 scrape_configs:
   - job_name: system
