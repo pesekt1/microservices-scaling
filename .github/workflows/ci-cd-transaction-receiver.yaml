@@ -37,7 +37,7 @@ jobs:
       - name: Run integration tests
         run: |
           cd transaction-receiver
-          npm test
+          npx vitest run integration.test.ts
 
   system-tests:
     runs-on: ubuntu-latest
