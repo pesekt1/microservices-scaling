@@ -19,7 +19,10 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
-
+      fraud-detection:
+        image: pesekt1/fraud-detection:latest
+        ports:
+          - 3003:3003
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
