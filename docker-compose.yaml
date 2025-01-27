@@ -104,7 +104,8 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./loki-data:/tmp/loki
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - ./loki-data:/loki
     environment:
       - LOKI_CONFIG_FILE=/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
@@ -127,9 +128,12 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana # Mount volume for persistent storage
 
 volumes:
   loki-data:
+  grafana-data:
 #   mysql_data:
 
 networks:
