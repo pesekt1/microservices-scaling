@@ -1,7 +1,10 @@
 import express from "express";
 import amqplib from "amqplib";
 import { faker } from "@faker-js/faker";
+import { createLogger } from "@microservices-demo/logger-library";
 import "dotenv/config";
+
+const { logMessage } = createLogger("fraud-detection");
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
@@ -12,20 +15,48 @@ const INPUT_QUEUE_NAME = process.env.INPUT_QUEUE_NAME as string;
 const ACCEPTED_QUEUE_NAME = process.env.ACCEPTED_QUEUE_NAME as string;
 const SUSPICIOUS_QUEUE_NAME = process.env.SUSPICIOUS_QUEUE_NAME as string;
 
-async function initializeMessageQueue() {
+let channel: amqplib.Channel;
+
+export async function connectToRabbitMQ() {
   try {
     const connection = await amqplib.connect(RABBITMQ_URL);
-    const channel = await connection.createChannel();
+    channel = await connection.createChannel();
+    logMessage("Connected to RabbitMQ!", {
+      level: "info",
+    });
+  } catch (error) {
+    logMessage(`RabbitMQ connection error: ${(error as Error).message}`, {
+      level: "error",
+    });
+    throw error;
+  }
+}
+
+export async function assertQueues() {
+  try {
     await channel.assertQueue(INPUT_QUEUE_NAME);
     await channel.assertQueue(ACCEPTED_QUEUE_NAME);
     await channel.assertQueue(SUSPICIOUS_QUEUE_NAME);
-    console.log("Connected to RabbitMQ and queues asserted!");
+    logMessage("Queues asserted!", {
+      level: "info",
+    });
+  } catch (error) {
+    logMessage(`Queue assertion error: ${(error as Error).message}`, {
+      level: "error",
+    });
+    throw error;
+  }
+}
 
-    // Consume messages from the INPUT_QUEUE
+export async function consumeMessages() {
+  try {
     channel.consume(INPUT_QUEUE_NAME, async (msg) => {
       if (msg) {
         const data = JSON.parse(msg.content.toString());
-        console.log("Received:", data);
+        logMessage("Received message", {
+          level: "info",
+          meta: { data },
+        });
 
         // Simulate fraud detection
         const isSuspicious = Math.random() < 0.05; // 5% chance of being suspicious
@@ -41,29 +72,32 @@ async function initializeMessageQueue() {
             SUSPICIOUS_QUEUE_NAME,
             Buffer.from(JSON.stringify(suspiciousData))
           );
-          console.log("Sent to suspicious queue:", suspiciousData);
+          logMessage("Sent to suspicious queue", {
+            level: "info",
+          });
         } else {
           channel.sendToQueue(
             ACCEPTED_QUEUE_NAME,
             Buffer.from(JSON.stringify(data))
           );
-          console.log("Sent to approved queue:", data);
+          logMessage("Sent to approved queue", {
+            level: "info",
+          });
         }
 
         channel.ack(msg);
       }
     });
-
-    console.log("Fraud detection service is running...");
   } catch (error) {
-    console.error("RabbitMQ error:", error);
+    logMessage(`Message consumption error: ${(error as Error).message}`, {
+      level: "error",
+    });
+    throw error;
   }
 }
 
-initializeMessageQueue().catch((err) => {
-  console.error("Error in Fraud detection service:", err);
-});
-
 app.listen(PORT, () => {
-  console.log(`Fraud detection service listening on port ${PORT}`);
+  logMessage(`Fraud detection service listening on port ${PORT}`, {
+    level: "info",
+  });
 });
