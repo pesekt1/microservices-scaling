@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",               // Output directory for compiled files
+    "rootDir": "./src",               // Root directory of your source files
+    "declaration": true,              // Generate `.d.ts` declaration files
+    "declarationDir": "./dist",       // Place `.d.ts` files in the `dist` folder
+    "moduleResolution": "node",       // Use Node.js module resolution
+    "module": "commonjs",             // Output module format (or "esnext" for modern modules)
+    "target": "es2019",               // Set ECMAScript target version
+    "strict": true,                   // Enable all strict type-checking options
+    "esModuleInterop": true,          // Allow importing CommonJS modules
+    "forceConsistentCasingInFileNames": true, // Ensure file imports are case-sensitive
+    "skipLibCheck": true              // Skip type checking for declaration files in `node_modules`
+  },
+  "include": ["src"],                 // Include source files for compilation
+  "exclude": ["node_modules", "dist"] // Exclude folders from compilation
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@microservices-demo/logger-library",
+  "version": "1.0.0",
+  "description": "Reusable logger library for microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Tomas Pesek",
+  "license": "ISC",
+  "dependencies": {
+    "winston": "^3.17.0"
+  }
+}
