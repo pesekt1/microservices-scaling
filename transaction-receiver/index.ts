@@ -3,7 +3,7 @@ import amqplib from "amqplib";
 import { createLogger } from "@microservices-demo/logger-library";
 import "dotenv/config";
 
-const { logger, logMessage } = createLogger("transaction-receiver");
+const { logMessage } = createLogger("transaction-receiver");
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
@@ -35,7 +35,6 @@ export async function publishTransaction(transaction: any) {
       const errorMessage = "RabbitMQ channel is not initialized";
       logMessage(errorMessage, {
         level: "error",
-        meta: { service: SERVICE },
       });
       throw new Error(errorMessage);
     }
