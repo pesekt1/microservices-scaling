@@ -1,7 +1,9 @@
 import express from "express";
 import amqplib from "amqplib";
-import { logMessage } from "./logger";
+import { createLogger } from "@microservices-demo/logger-library";
 import "dotenv/config";
+
+const { logger, logMessage } = createLogger("transaction-receiver");
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
@@ -9,7 +11,6 @@ app.use(express.json()); // Middleware to parse JSON bodies
 const PORT = process.env.PORT;
 const RABBITMQ_URL = process.env.RABBITMQ_URL as string;
 const QUEUE_NAME = process.env.QUEUE_NAME as string;
-const SERVICE = "transaction-receiver";
 
 let channel: amqplib.Channel;
 
@@ -20,12 +21,10 @@ export async function initializeMessageQueue() {
     await channel.assertQueue(QUEUE_NAME);
     logMessage("Connected to RabbitMQ and queue asserted!", {
       level: "info",
-      meta: { service: SERVICE },
     });
   } catch (error) {
     logMessage(`RabbitMQ error: ${(error as Error).message}`, {
       level: "error",
-      meta: { service: SERVICE },
     });
   }
 }
@@ -46,13 +45,12 @@ export async function publishTransaction(transaction: any) {
 
     logMessage("Transaction sent to the queue successfully", {
       level: "info",
-      meta: { service: SERVICE, transaction },
     });
   } catch (error) {
     // Log the error and rethrow it for upstream handling
     logMessage(`Failed to publish transaction: ${(error as Error).message}`, {
       level: "error",
-      meta: { service: SERVICE, transaction },
+      meta: { transaction },
     });
     throw error;
   }
@@ -66,7 +64,6 @@ app.post("/transactions", async (req, res) => {
     const errorMessage = "Missing required fields";
     logMessage(errorMessage, {
       level: "error",
-      meta: { service: "transaction-receiver" },
     });
     return res.status(400).send(errorMessage);
   }
@@ -94,6 +91,5 @@ initializeMessageQueue();
 app.listen(PORT, () => {
   logMessage(`Transaction receiver service listening on port ${PORT}`, {
     level: "info",
-    meta: { service: SERVICE },
   });
 });
