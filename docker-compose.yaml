@@ -34,6 +34,8 @@ services:
       context: ./bank
       dockerfile: Dockerfile
     image: pesekt1/bank:latest
+    volumes:
+      - ./logs:/var/log
     environment:
       PORT: 3002
       MESSAGE_SPEED: 1000
@@ -47,7 +49,8 @@ services:
       dockerfile: Dockerfile
     image: pesekt1/transaction-receiver:latest
     volumes:
-      - /var/log/transaction-receiver:/var/log/transaction-receiver
+      - ./logs:/var/log
+      #- /var/log/transaction-receiver:/var/log/transaction-receiver
       # Map its logs to a directory Promtail can access
     depends_on:
       - rabbitmq
@@ -64,6 +67,8 @@ services:
       context: ./fraud-detection
       dockerfile: Dockerfile
     image: pesekt1/fraud-detection:latest
+    volumes:
+      - ./logs:/var/log
     depends_on:
       - rabbitmq
     environment:
@@ -80,6 +85,8 @@ services:
       context: ./transaction-processing
       dockerfile: Dockerfile
     image: pesekt1/transaction-processing:latest
+    volumes:
+      - ./logs:/var/log
     #removed the name because of scaling
     #container_name: transaction-processing
     depends_on:
@@ -115,9 +122,8 @@ services:
     image: grafana/promtail:2.9.1
     container_name: promtail
     volumes:
-      - /var/log:/var/log
+      - ./logs:/var/log
       - ./promtail-config.yaml:/etc/promtail/config.yaml
-      - /var/log/transaction-receiver:/var/log/transaction-receiver
     command: -config.file=/etc/promtail/config.yaml
 
   grafana:
@@ -134,7 +140,8 @@ services:
 volumes:
   loki-data:
   grafana-data:
-#   mysql_data:
+  var-log:
+# mysql_data:
 
 networks:
   public-net:
