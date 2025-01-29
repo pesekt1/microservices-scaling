@@ -2,10 +2,11 @@
   "name": "transaction-processing",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "npm install && tsc",
-    "start": "nodemon --exec ts-node index.ts",
+    "start": "npm run build && node dist/index.js",
     "start-prod": "node dist/index.js"
   },
   "keywords": [],
@@ -22,7 +23,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.4.0",
+    "@microservices-demo/logger-library": "^1.0.6",
     "amqplib": "^0.10.5",
     "dotenv": "^16.4.1",
     "express": "^4.21.2",

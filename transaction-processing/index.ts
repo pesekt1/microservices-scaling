@@ -1,7 +1,11 @@
 import express from "express";
 import amqplib from "amqplib";
 import { Sequelize, DataTypes } from "sequelize";
+import createLogger from "@microservices-demo/logger-library";
+
 import "dotenv";
+
+const { logMessage } = createLogger("transaction-processing");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -18,10 +22,15 @@ const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connection has been established successfully.");
+    logMessage("Connection has been established successfully.", {
+      level: "info",
+    });
   })
   .catch((err) => {
-    console.error("Unable to connect to the database:", err);
+    logMessage("Unable to connect to the database.", {
+      level: "error",
+      meta: { error: err },
+    });
   });
 
 const Transaction = sequelize.define("Transaction", {
@@ -53,7 +62,9 @@ async function processing() {
   try {
     await sequelize.sync(); // means drop all tables and recreate them
     //await sequelize.sync({ force: true }); // means drop all tables and recreate them
-    console.log("Database synced.");
+    logMessage("Database synced.", {
+      level: "info",
+    });
 
     const connection = await amqplib.connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
@@ -67,7 +78,10 @@ async function processing() {
       async (msg) => {
         if (msg) {
           const data = JSON.parse(msg.content.toString());
-          console.log("Received:", data);
+          logMessage("Received message", {
+            level: "info",
+            meta: { data },
+          });
 
           // Simulate processing delay
           await delay(MESSAGE_PROCESSING_SPEED);
@@ -78,17 +92,20 @@ async function processing() {
           };
 
           await Transaction.create(processedTransaction);
-          console.log("Saved to DB:", processedTransaction);
+          logMessage("Saved to DB", {
+            level: "info",
+            meta: { processedTransaction },
+          });
 
           channel.ack(msg);
         }
       },
       { noAck: false }
     ); // Ensure manual acknowledgment is enabled
-
-    console.log("Transaction processing microservice is running...");
   } catch (error) {
-    console.error("Transaction processing microservice:", error);
+    logMessage(`Transaction processing error: ${(error as Error).message}`, {
+      level: "error",
+    });
   }
 }
 
@@ -96,5 +113,7 @@ async function processing() {
 processing();
 
 app.listen(PORT, () => {
-  console.log(`Transaction processing service listening on port ${PORT}`);
+  logMessage(`Transaction processing service listening on port ${PORT}`, {
+    level: "info",
+  });
 });
