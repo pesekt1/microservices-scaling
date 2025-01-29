@@ -1,21 +1,35 @@
 {
   "name": "@microservices-demo/logger-library",
-  "version": "1.0.10",
+  "version": "1.0.13",
   "description": "Reusable logger library for microservices.",
-  "main": "dist/logger.js",
-  "module": "dist/logger.js",
-  "types": "dist/logger.d.ts",
+  "main": "dist/cjs/logger.js",
+  "module": "dist/esm/logger.mjs",
+  "types": "dist/types/logger.d.ts",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/logger.mjs",
+      "require": "./dist/cjs/logger.js"
+    }
+  },
   "scripts": {
-    "build": "tsc"
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && npm run rename:esm",
+    "build": "npm run build:cjs && npm run build:esm",
+    "clean": "rimraf dist",
+    "rename:esm": "node --experimental-modules ./scripts/fix-mjs.mjs",
+    "prepack": "npm run clean && npm run build"
   },
   "dependencies": {
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "rimraf": "^6.0.1",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   },
   "keywords": [
     "logger",
@@ -27,12 +41,5 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
-  },
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/logger.js",
-      "require": "./dist/logger.cjs"
-    }
   }
 }
