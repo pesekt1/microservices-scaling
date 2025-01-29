@@ -1,4 +1,3 @@
-- Finish logging for all microservices
-- Implement volumes for all microservices source code, so that we dont need to rebuild the image everytime we make a change.
+- Implement volumes for all microservices source code, so that we dont need to rebuild the image everytime we make a change when running docker-compoase.
 - Implement logging also for local Kubernetes cluster, now its just for docker-compose
 - system test for ci-cd-transaction-receiver is not working. The fraud-detection microservice is not publishing the message on one of the 2 queues.
