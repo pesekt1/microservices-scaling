@@ -1,7 +1,7 @@
 import express from "express";
 import amqplib from "amqplib";
 import { faker } from "@faker-js/faker";
-import { createLogger } from "@microservices-demo/logger-library";
+import createLogger from "@microservices-demo/logger-library";
 import "dotenv/config";
 
 const { logMessage } = createLogger("fraud-detection");

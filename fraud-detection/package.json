@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
-    "@microservices-demo/logger-library": "^1.0.2",
+    "@microservices-demo/logger-library": "^1.0.13",
     "amqplib": "^0.10.5",
     "dotenv": "^16.4.1",
     "express": "^4.21.2",

@@ -1,6 +1,6 @@
 import express from "express";
 import amqplib from "amqplib";
-import { createLogger } from "@microservices-demo/logger-library";
+import createLogger from "@microservices-demo/logger-library";
 import "dotenv/config";
 
 const { logMessage } = createLogger("transaction-receiver");
