@@ -1,10 +1,10 @@
 {
   "name": "@microservices-demo/logger-library",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "Reusable logger library for microservices.",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/logger.js",
+  "module": "dist/logger.js",
+  "types": "dist/logger.d.ts",
   "files": [
     "dist"
   ],
