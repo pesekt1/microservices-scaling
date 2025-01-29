@@ -96,6 +96,18 @@ export async function consumeMessages() {
   }
 }
 
+async function initializeMessageQueue() {
+  await connectToRabbitMQ();
+  await assertQueues();
+  await consumeMessages();
+}
+
+initializeMessageQueue().catch((err) => {
+  logMessage(`Error in Fraud detection service: ${(err as Error).message}`, {
+    level: "error",
+  });
+});
+
 app.listen(PORT, () => {
   logMessage(`Fraud detection service listening on port ${PORT}`, {
     level: "info",
