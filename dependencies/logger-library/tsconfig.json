@@ -10,8 +10,9 @@
     "strict": true,                   // Enable all strict type-checking options
     "esModuleInterop": true,          // Allow importing CommonJS modules
     "forceConsistentCasingInFileNames": true, // Ensure file imports are case-sensitive
-    "skipLibCheck": true              // Skip type checking for declaration files in `node_modules`
+    "skipLibCheck": true,              // Skip type checking for declaration files in `node_modules`
+    "rootDir": "./src"  
   },
-  "include": ["src"],                 // Include source files for compilation
+  "include": ["src/**/*.ts"],                // Include source files for compilation
   "exclude": ["node_modules", "dist"] // Exclude folders from compilation
 }

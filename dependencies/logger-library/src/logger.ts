@@ -1,7 +1,7 @@
 import winston from "winston";
 import path from "path";
 
-export function createLogger(serviceName: string) {
+function createLogger(serviceName: string) {
   const logFilePath = path.join("/var", "log", serviceName, "microservice.log");
 
   const logger = winston.createLogger({
@@ -26,3 +26,5 @@ export function createLogger(serviceName: string) {
 
   return { logger, logMessage };
 }
+
+export default createLogger;

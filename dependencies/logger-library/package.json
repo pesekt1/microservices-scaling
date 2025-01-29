@@ -1,6 +1,6 @@
 {
   "name": "@microservices-demo/logger-library",
-  "version": "1.0.6",
+  "version": "1.0.10",
   "description": "Reusable logger library for microservices.",
   "main": "dist/logger.js",
   "module": "dist/logger.js",
@@ -15,7 +15,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "typescript": "^4.9.5"
+    "typescript": "^5.3.3"
   },
   "keywords": [
     "logger",
@@ -27,5 +27,12 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/logger.js",
+      "require": "./dist/logger.cjs"
+    }
   }
 }
