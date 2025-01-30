@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+data:
+  config.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki.default.svc.cluster.local:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: system
+        static_configs:
+          - targets:
+              - promtail:9080
+            labels:
+              job: varlogs
+              __path__: /var/log/*.log
+
+      - job_name: transaction-receiver
+        static_configs:
+          - targets:
+              - promtail:9080
+            labels:
+              job: transaction-receiver
+              __path__: /var/log/transaction-receiver/*.log
+
+      - job_name: bank
+        static_configs:
+          - targets:
+              - promtail:9080
+            labels:
+              job: bank
+              __path__: /var/log/bank/*.log
+
+      - job_name: fraud-detection
+        static_configs:
+          - targets:
+              - promtail:9080
+            labels:
+              job: fraud-detection
+              __path__: /var/log/fraud-detection/*.log
+
+      - job_name: transaction-processing
+        static_configs:
+          - targets:
+              - promtail:9080
+            labels:
+              job: transaction-processing
+              __path__: /var/log/transaction-processing/*.log
