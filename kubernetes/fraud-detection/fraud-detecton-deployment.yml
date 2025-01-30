@@ -30,3 +30,11 @@ spec:
           value: "acceptedTransactions"
         - name: MESSAGE_SPEED
           value: "1000"
+        volumeMounts:
+          - name: log-volume
+            mountPath: /var/log/fraud-detection  # Mount the log directory to this path
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /var/log/fraud-detection  # This should be the location of logs on the node
+            type: Directory

@@ -29,3 +29,11 @@ spec:
           value: "mysql://user:password@mysql:3306/transactions_db"
         - name: MESSAGE_PROCESSING_SPEED
           value: "3000"
+        volumeMounts:
+          - name: log-volume
+            mountPath: /var/log/transaction-processing  # Mount the log directory to this path
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /var/log/transaction-processing  # This should be the location of logs on the node
+            type: Directory

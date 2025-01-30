@@ -26,3 +26,11 @@ spec:
           value: "transactionPayloads"
         - name: MESSAGE_SPEED
           value: "1000"
+        volumeMounts:
+          - name: log-volume
+            mountPath: /var/log/transaction-receiver  # Mount the log directory to this path
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /var/log/transaction-receiver  # This should be the location of logs on the node
+            type: Directory
