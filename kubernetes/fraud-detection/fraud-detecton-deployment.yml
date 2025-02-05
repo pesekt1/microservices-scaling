@@ -37,4 +37,4 @@ spec:
         - name: log-volume
           hostPath:
             path: /var/log/fraud-detection  # This should be the location of logs on the node
-            type: Directory
+            type: DirectoryOrCreate

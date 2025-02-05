@@ -33,4 +33,4 @@ spec:
         - name: log-volume
           hostPath:
             path: /var/log/transaction-receiver  # This should be the location of logs on the node
-            type: Directory
+            type: DirectoryOrCreate
