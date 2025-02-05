@@ -13,9 +13,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Create the necessary directories for logging
-RUN mkdir -p /var/log/transaction-receiver
-
 # Add wait-for-it.sh script
 COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
