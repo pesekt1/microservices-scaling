@@ -47,14 +47,23 @@ fi
 
 # Check if KEDA is installed
 if ! kubectl get namespace keda &> /dev/null; then
-  echo "KEDA is not installed. Installing KEDA..."
+  echo "⚠️ KEDA is not installed. Installing KEDA..."
   kubectl apply --server-side -f https://github.com/kedacore/keda/releases/download/v2.16.1/keda-2.16.1.yaml
 
   # Wait for KEDA to be ready
   echo "Waiting for KEDA to be ready..."
   kubectl wait --for=condition=available --timeout=600s deployment/keda-operator -n keda
 else
-  echo "KEDA is already installed."
+  echo "✅ KEDA is already installed."
+fi
+
+# Check if Grafana is running by looking for the Grafana pod
+if kubectl get pods -n default | grep -q 'grafana'; then
+    echo "✅ Grafana is already installed and running."
+else
+    echo "⚠️ Grafana is not installed. Installing Grafana..."
+    # Execute the existing grafana-install.sh script
+    ./grafana-install.sh
 fi
 
 # Apply all Kubernetes configurations from the directory recursively
@@ -68,7 +77,7 @@ wait_for_pod "app=rabbitmq-exporter"
 kubectl port-forward svc/rabbitmq-exporter 9419:9419 > /dev/null 2>&1 &
 RABBITMQ_EXPORTER_PORT_FORWARD_PID=$!
 echo $RABBITMQ_EXPORTER_PORT_FORWARD_PID >> port_forward_pids.txt
-echo "Port forwarding for rabbitMQ-exporter-service set up on port 9419."
+echo "✅ Port forwarding for rabbitMQ-exporter-service set up on port 9419."
 
 # Wait for the Prometheus service pod to be ready
 wait_for_pod "app=prometheus"
@@ -77,7 +86,7 @@ wait_for_pod "app=prometheus"
 kubectl port-forward svc/prometheus 9090:9090 > /dev/null 2>&1 &
 PROMETHEUS_PORT_FORWARD_PID=$!
 echo $PROMETHEUS_PORT_FORWARD_PID >> port_forward_pids.txt
-echo "Port forwarding for prometheus-service set up on port 9090."
+echo "✅ Port forwarding for prometheus-service set up on port 9090."
 
 # Check if the bank service Docker image has been updated
 echo "Checking if the bank service Docker image has been updated..."
