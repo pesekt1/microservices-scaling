@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadvisor
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cadvisor
+  template:
+    metadata:
+      labels:
+        app: cadvisor
+    spec:
+      hostPID: true   # Allow cAdvisor to access PID information
+      hostIPC: true   # Allow cAdvisor to access IPC namespaces
+      containers:
+        - name: cadvisor
+          image: gcr.io/cadvisor/cadvisor:v0.47.2
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /rootfs
+              name: rootfs
+              readOnly: true
+            - mountPath: /var/run
+              name: var-run
+              readOnly: false
+            - mountPath: /sys
+              name: sys
+              readOnly: true
+            - mountPath: /var/lib/docker
+              name: docker
+              readOnly: true
+            - name: disk
+              mountPath: /dev/disk
+              readOnly: true
+            - mountPath: /host
+              name: host
+              readOnly: true
+      volumes:
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: var-run
+          hostPath:
+            path: /var/run
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: docker
+          hostPath:
+            path: /var/lib/docker
+        - name: host
+          hostPath:
+            path: /
+        - name: disk
+          hostPath:
+            path: /dev/disk

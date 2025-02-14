@@ -1,0 +1,17 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: transaction-receiver-scaledobject
+  namespace: default
+spec:
+  scaleTargetRef:
+    name: transaction-receiver  # The deployment name you want to scale
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus.default.svc.cluster.local:9090
+      metricName: "container_cpu_usage_seconds_total"
+      query: sum(container_cpu_usage_seconds_total{container_label_app="transaction-receiver", container_label_io_kubernetes_pod_namespace="default"}) / 2
+      threshold: "1"  # Scale when the average CPU usage is above 1% for 2 minutes
