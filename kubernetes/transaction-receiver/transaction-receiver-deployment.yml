@@ -15,6 +15,13 @@ spec:
       containers:
       - name: transaction-receiver
         image: pesekt1/transaction-receiver:latest
+        resources:
+          requests:
+            cpu: "100m"  # Request 100m (millicpu) for the container
+            memory: "128Mi"  # Request 128Mi memory
+          limits:
+            cpu: "500m"  # Limit the CPU usage to 500m
+            memory: "512Mi"  # Limit memory to 512Mi        
         ports:
         - containerPort: 3000
         env:
