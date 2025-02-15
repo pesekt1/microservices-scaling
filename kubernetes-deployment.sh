@@ -63,7 +63,7 @@ if kubectl get pods -n default | grep -q 'grafana'; then
 else
     echo "⚠️ Grafana is not installed. Installing Grafana..."
     # Execute the existing grafana-install.sh script
-    ./grafana-install.sh
+    ./scripts/grafana-install.sh
 fi
 
 # Apply all Kubernetes configurations from the directory recursively
@@ -107,6 +107,9 @@ docker run -d --name bank-service --network host \
   -e MESSAGE_SPEED=1000 \
   -e API_URL=http://localhost:32000/transactions \
   pesekt1/bank:latest
+
+# Open Chrome with different UI services
+./scripts/open-chrome.sh
 
 # Detach the script to keep port forwarding running
 disown
