@@ -56,6 +56,9 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function consumeMessages() {
   try {
+    // Limit the number of unacknowledged messages to 1, otherwise the delay will not work
+    channel.prefetch(1);
+
     channel.consume(
       INPUT_QUEUE_NAME,
       async (msg) => {
