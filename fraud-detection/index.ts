@@ -56,47 +56,51 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function consumeMessages() {
   try {
-    channel.consume(INPUT_QUEUE_NAME, async (msg) => {
-      if (msg) {
-        const data = JSON.parse(msg.content.toString());
-        logMessage("Received message", {
-          level: "info",
-          meta: { data },
-        });
-
-        // Simulate processing delay
-        await delay(MESSAGE_PROCESSING_SPEED);
-
-        // Simulate fraud detection
-        const isSuspicious = Math.random() < 0.05; // 5% chance of being suspicious
-
-        if (isSuspicious) {
-          const suspiciousData = {
-            ...data,
-            flaggedAt: new Date().toISOString(),
-            reason: faker.lorem.paragraphs(2), // Generate a long random description
-          };
-
-          channel.sendToQueue(
-            SUSPICIOUS_QUEUE_NAME,
-            Buffer.from(JSON.stringify(suspiciousData))
-          );
-          logMessage("Sent to suspicious queue", {
+    channel.consume(
+      INPUT_QUEUE_NAME,
+      async (msg) => {
+        if (msg) {
+          const data = JSON.parse(msg.content.toString());
+          logMessage("Received message", {
             level: "info",
+            meta: { data },
           });
-        } else {
-          channel.sendToQueue(
-            ACCEPTED_QUEUE_NAME,
-            Buffer.from(JSON.stringify(data))
-          );
-          logMessage("Sent to approved queue", {
-            level: "info",
-          });
+
+          // Simulate processing delay
+          await delay(MESSAGE_PROCESSING_SPEED);
+
+          // Simulate fraud detection
+          const isSuspicious = Math.random() < 0.05; // 5% chance of being suspicious
+
+          if (isSuspicious) {
+            const suspiciousData = {
+              ...data,
+              flaggedAt: new Date().toISOString(),
+              reason: faker.lorem.paragraphs(2), // Generate a long random description
+            };
+
+            channel.sendToQueue(
+              SUSPICIOUS_QUEUE_NAME,
+              Buffer.from(JSON.stringify(suspiciousData))
+            );
+            logMessage("Sent to suspicious queue", {
+              level: "info",
+            });
+          } else {
+            channel.sendToQueue(
+              ACCEPTED_QUEUE_NAME,
+              Buffer.from(JSON.stringify(data))
+            );
+            logMessage("Sent to approved queue", {
+              level: "info",
+            });
+          }
+
+          channel.ack(msg);
         }
-
-        channel.ack(msg);
-      }
-    });
+      },
+      { noAck: false } // Ensure manual acknowledgment is enabled otherwise the delay will not work
+    );
   } catch (error) {
     logMessage(`Message consumption error: ${(error as Error).message}`, {
       level: "error",
