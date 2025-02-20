@@ -70,7 +70,7 @@ async function processing() {
     const channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME);
 
-    // Limit the number of unacknowledged messages to 1
+    // Limit the number of unacknowledged messages to 1, otherwise the delay will not work
     channel.prefetch(1);
 
     channel.consume(
