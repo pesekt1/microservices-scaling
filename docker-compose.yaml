@@ -77,6 +77,7 @@ services:
       INPUT_QUEUE_NAME: transactionPayloads
       ACCEPTED_QUEUE_NAME: acceptedTransactions
       SUSPICIOUS_QUEUE_NAME: suspiciousTransactions
+      MESSAGE_PROCESSING_SPEED: 3000
     networks:
       - rabbitmq-net
 
@@ -111,7 +112,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - ./docker-compose-config-yaml/loki-config.yaml:/etc/loki/local-config.yaml
       - ./loki-data:/loki
     environment:
       - LOKI_CONFIG_FILE=/etc/loki/local-config.yaml
@@ -123,7 +124,7 @@ services:
     container_name: promtail
     volumes:
       - ./logs:/var/log
-      - ./promtail-config.yaml:/etc/promtail/config.yaml
+      - ./docker-compose-config-yaml/promtail-config.yaml:/etc/promtail/config.yaml
     command: -config.file=/etc/promtail/config.yaml
 
   grafana:

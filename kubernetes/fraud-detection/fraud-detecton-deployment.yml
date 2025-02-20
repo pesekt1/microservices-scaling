@@ -28,8 +28,8 @@ spec:
           value: "suspiciousTransactions"
         - name: ACCEPTED_QUEUE_NAME
           value: "acceptedTransactions"
-        - name: MESSAGE_SPEED
-          value: "1000"
+        - name: MESSAGE_PROCESSING_SPEED
+          value: "3000"
         volumeMounts:
           - name: log-volume
             mountPath: /var/log/fraud-detection  # Mount the log directory to this path

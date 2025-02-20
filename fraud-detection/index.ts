@@ -14,6 +14,9 @@ const RABBITMQ_URL = process.env.RABBITMQ_URL as string;
 const INPUT_QUEUE_NAME = process.env.INPUT_QUEUE_NAME as string;
 const ACCEPTED_QUEUE_NAME = process.env.ACCEPTED_QUEUE_NAME as string;
 const SUSPICIOUS_QUEUE_NAME = process.env.SUSPICIOUS_QUEUE_NAME as string;
+const MESSAGE_PROCESSING_SPEED = parseInt(
+  process.env.MESSAGE_PROCESSING_SPEED as string
+);
 
 let channel: amqplib.Channel;
 
@@ -48,6 +51,9 @@ export async function assertQueues() {
   }
 }
 
+// for simulating processing delay
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function consumeMessages() {
   try {
     channel.consume(INPUT_QUEUE_NAME, async (msg) => {
@@ -57,6 +63,9 @@ export async function consumeMessages() {
           level: "info",
           meta: { data },
         });
+
+        // Simulate processing delay
+        await delay(MESSAGE_PROCESSING_SPEED);
 
         // Simulate fraud detection
         const isSuspicious = Math.random() < 0.05; // 5% chance of being suspicious
