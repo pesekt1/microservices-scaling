@@ -2,11 +2,11 @@
   "name": "transaction-processing",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "npm install && tsc",
-    "start": "npm run build && node dist/index.js",
+    "start": "nodemon --legacy-watch --exec ts-node --transpile-only index.ts",
+    "start-js": "npm run build && node dist/index.js",
     "start-prod": "node dist/index.js"
   },
   "keywords": [],
