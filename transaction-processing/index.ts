@@ -60,7 +60,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function processing() {
   try {
-    await sequelize.sync(); // means drop all tables and recreate them
+    await sequelize.sync();
     //await sequelize.sync({ force: true }); // means drop all tables and recreate them
     logMessage("Database synced.", {
       level: "info",
