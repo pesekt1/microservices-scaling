@@ -92,7 +92,7 @@ async function processing() {
           };
 
           await Transaction.create(processedTransaction);
-          logMessage("Saved to DB", {
+          logMessage("UPDATED VERSION: Saved to DB", {
             level: "info",
             meta: { processedTransaction },
           });
