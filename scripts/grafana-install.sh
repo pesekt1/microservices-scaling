@@ -18,7 +18,13 @@ echo "🔄 Adding Grafana Helm repository..."
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
-# Step 3: Install Grafana with persistence
+# Step 3: Uninstall existing Grafana release if present
+if helm list --filter '^grafana$' | grep grafana &> /dev/null; then
+    echo "🧹 Uninstalling existing Grafana release..."
+    helm uninstall grafana
+fi
+
+# Step 4: Install Grafana with persistence
 echo "📦 Installing Grafana with persistent storage..."
 helm install grafana grafana/grafana \
   --set service.type=NodePort \
@@ -29,11 +35,11 @@ helm install grafana grafana/grafana \
   --set adminPassword='admin'
 
 
-# Step 4: Wait for Grafana to be ready
+# Step 5: Wait for Grafana to be ready
 echo "⏳ Waiting for Grafana to be ready..."
 kubectl wait --for=condition=available deployment/grafana --timeout=120s
 
-# Step 5: Retrieve Admin Password
+# Step 6: Retrieve Admin Password
 echo "🔑 Retrieving Grafana admin password..."
 GRAFANA_PASSWORD=$(kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode)
 
