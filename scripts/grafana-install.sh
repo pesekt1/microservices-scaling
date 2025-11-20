@@ -32,7 +32,8 @@ helm install grafana grafana/grafana \
   --set persistence.enabled=true \
   --set persistence.size=2Gi \
   --set persistence.storageClassName=hostpath \
-  --set adminPassword='admin'
+  --set adminPassword='admin' \
+  --set initChownData.enabled=false
 
 
 # Step 5: Wait for Grafana to be ready
