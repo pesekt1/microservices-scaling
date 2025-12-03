@@ -75,6 +75,20 @@ make install-dependencies
 
 Installs Grafana, KEDA, metrics-server, and other global services.
 
+### Accessing Services
+
+After deployment, you can access the following services:
+
+| Service           | URL / Port             | Username | Password |
+| ----------------- | ---------------------- | -------- | -------- |
+| Grafana           | http://localhost:30001 | admin    | admin    |
+| Prometheus        | http://localhost:9090  | -        | -        |
+| RabbitMQ          | http://localhost:30008 | guest    | guest    |
+| RabbitMQ Exporter | http://localhost:9419  | -        | -        |
+| MySQL             | (via MySQL Workbench)  | root     | root     |
+
+> Note: If you use port-forwarding, ensure the relevant commands are running (see Quick Start and Extra Info sections).
+
 ---
 
 ## Setup Options
@@ -104,15 +118,15 @@ Simple local development and manual scaling.
 
 ### 2. Legacy Kubernetes Script
 
-Manual deployment using kubernetes-deployment.sh and kubectl apply/delete.
+Automated deployment using the kubernetes-deployment.sh script. This script applies all manifests, manages port forwarding, and runs the bank service outside Kubernetes.
 
-- Apply all manifests:
+- Deploy everything:
   ```bash
-  kubectl apply -f ./kubernetes
+  bash kubernetes-deployment.sh
   ```
-- Delete all manifests:
+- Delete all deployments and stop port forwarding:
   ```bash
-  kubectl delete -f ./kubernetes
+  bash kubernetes-deployment.sh --delete
   ```
 
 ### 3. Automated Makefile + Skaffold (Best Practice)
@@ -122,6 +136,36 @@ Central orchestration and automated deployment with persistent global services.
 - See Quick Start above for workflow.
 - Skaffold applies all manifests in the `kubernetes` folder and subfolders, including logging (Loki, Promtail), microservices, and infrastructure.
 - Global services (Grafana, KEDA, metrics-server) managed outside Skaffold for persistence.
+
+---
+
+## Uninstall & Cleanup
+
+To fully remove all resources and clean up your environment, use the appropriate method below:
+
+### Makefile + Skaffold (Recommended)
+
+```bash
+make down
+```
+
+Removes all microservices, global dependencies, and cleans up Kubernetes resources.
+
+### Legacy Kubernetes Script
+
+```bash
+bash kubernetes-deployment.sh --delete
+```
+
+Deletes all deployments, stops port forwarding, and removes the bank-service Docker container.
+
+### Docker Compose
+
+```bash
+docker-compose down
+```
+
+Stops and removes all containers defined in docker-compose.
 
 ---
 
@@ -176,6 +220,41 @@ spec:
 - Remove dangling Docker images:
   ```bash
   docker images -f "dangling=true" -q | xargs docker rmi
+  ```
+
+### Common Issues & Solutions
+
+**PVC stuck in Pending**
+
+- Cause: StorageClass mismatch or missing.
+- Solution: Run `kubectl get storageclass` and ensure your PVC uses an existing StorageClass.
+
+**Pod CrashLoopBackOff**
+
+- Cause: Application error, missing config, or resource limits.
+- Solution: Run `kubectl logs <pod>` and `kubectl describe pod <pod>` to view errors.
+
+**Port conflicts**
+
+- Cause: Another process is using the port.
+- Solution: Change the port in your manifest or stop the conflicting process.
+
+**Metrics not available (Prometheus, metrics-server)**
+
+- Cause: Service not running or port-forwarding missing.
+- Solution: Check pod status and ensure port-forwarding is active.
+
+**Service not accessible**
+
+- Cause: Pod not running, port-forwarding missing, or firewall blocking.
+- Solution: Verify pod status, port-forwarding, and local firewall settings.
+
+**How to check events for a resource**
+
+- Run:
+  ```bash
+  kubectl describe pod <pod>
+  kubectl get events --sort-by=.metadata.creationTimestamp | tail -n 20
   ```
 
 ---
@@ -277,3 +356,5 @@ Search for RabbitMQ metrics (e.g., rabbitmq_queue_messages_ready)
 ### Scaling in Kubernetes
 
 KEDA uses a default pollingInterval 30sec and cooldownPeriod 60sec, so there is a delay before scaling up or down. The consumer microservice is scaled based on the rules defined in the scaleobject.yaml. You can observe results in RabbitMQ (number of consumers, consumed messages, messages in the queue, etc).
+
+---
