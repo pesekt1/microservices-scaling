@@ -1,5 +1,32 @@
 # Microservices Demo with RabbitMQ Message Broker and Kubernetes Auto-Scaling
 
+## Prerequisites: Installing Make and Skaffold (Windows)
+
+Before using the automated setup, ensure you have the following tools installed:
+
+### Make (Windows)
+
+- Install via Chocolatey:
+  ```bash
+  choco install make
+  ```
+
+### Skaffold (Windows)
+
+- Install via Chocolatey:
+  ```bash
+  choco install skaffold
+  ```
+
+---
+
+For Mac and Linux instructions, see:
+
+- [Make documentation](https://www.gnu.org/software/make/)
+- [Skaffold installation guide](https://skaffold.dev/docs/install/)
+
+---
+
 ## Project Overview
 
 A demo microservices system using Node.js, RabbitMQ, Docker, and Kubernetes. Includes monitoring, scaling, and automation tools.
