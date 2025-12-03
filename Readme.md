@@ -1,7 +1,7 @@
 # Microservices Demo with RabbitMQ Message Broker
 
-![System Architecture](./system-architecture.png)
-[Download the full architecture diagram (.drawio)](./system-architecture.drawio)
+![System Architecture](./documentation/system-architecture.png)
+[Download the full architecture diagram (.drawio)](./documentation/system-architecture.drawio)
 
 This project simulates a system for processing banking messages, similar to those used in financial institutions like Deutsche Börse. The architecture demonstrates how microservices communicate via RabbitMQ, process transactions, and integrate monitoring and scaling tools for a production-like environment.
 
