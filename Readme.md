@@ -1,4 +1,20 @@
-# Microservices Demo with RabbitMQ Message Broker and Kubernetes Auto-Scaling
+# Microservices Demo with RabbitMQ Message Broker
+
+![System Architecture](./system-architecture.png)
+[Download the full architecture diagram (.drawio)](./system-architecture.drawio)
+
+This project simulates a system for processing banking messages, similar to those used in financial institutions like Deutsche Börse. The architecture demonstrates how microservices communicate via RabbitMQ, process transactions, and integrate monitoring and scaling tools for a production-like environment.
+
+---
+
+## Requirements
+
+- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
+- Kubernetes enabled in Docker Desktop, or a local cluster (e.g., minikube)
+- Make
+- Skaffold
+
+---
 
 ## Prerequisites: Installing Make and Skaffold (Windows)
 
