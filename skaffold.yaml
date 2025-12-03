@@ -1,0 +1,23 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: microservice-system
+build:
+  local:
+    push: false
+deploy:
+  kubectl:
+    manifests:
+      - kubernetes/**/*.yaml
+      - kubernetes/**/*.yml
+portForward:
+  - resourceType: service
+    resourceName: rabbitmq-exporter
+    namespace: default
+    port: 9419
+    localPort: 9419
+  - resourceType: service
+    resourceName: prometheus
+    namespace: default
+    port: 9090
+    localPort: 9090
