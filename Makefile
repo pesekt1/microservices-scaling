@@ -3,20 +3,18 @@ SHELL := /bin/bash
 # Makefile for managing the bank-service and Kubernetes environment
 
 # .phony is used to declare targets that are not files, preventing conflicts with files of the same name
-.PHONY: help up down skaffold bank logs open keda-install grafana-install clean-bank
+.PHONY: help up down skaffold bank logs open keda-install grafana-install metrics-server-install clean-bank install-dependencies
 
-up: bank install-dependencies skaffold ## Start bank-service and Kubernetes environment
+up: bank skaffold ## Start bank-service and Kubernetes environment
 
 install-dependencies: ## Install all dependencies (KEDA, Grafana, metrics-server)
 	$(MAKE) keda-install
 	$(MAKE) grafana-install
 	$(MAKE) metrics-server-install
 
-skaffold: ## Run skaffold live dev loop
-	$(MAKE) keda-install
-	$(MAKE) grafana-install
-	skaffold dev
+skaffold: install-dependencies ## Run skaffold live dev loop
 	$(MAKE) open
+	skaffold dev
 
 bank: ## Build and start the external bank-service
 	@echo "🟦 Building bank-service image..."
