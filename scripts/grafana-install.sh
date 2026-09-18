@@ -16,9 +16,35 @@ fi
 echo "🚀 Installing Grafana using Helm..."
 
 # Step 1: Check if Helm is installed
+HELM_DIR="${HELM_DIR:-$HOME/.local/bin}"
+export PATH="$HELM_DIR:$PATH"
+
 if ! command -v helm &> /dev/null; then
-  echo "⚠️ Helm not found! Installing Helm..."
-  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  echo "⚠️ Helm not found! Installing Helm locally..."
+
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*)
+      HELM_VERSION="$(curl -fsSL https://api.github.com/repos/helm/helm/releases/latest |
+        sed -n 's/.*"tag_name": "\([^"]*\)".*/\1/p' |
+        head -n 1)"
+      ARCHIVE="$(mktemp --suffix=.zip)"
+      TEMP_DIR="$(mktemp -d)"
+
+      mkdir -p "$HELM_DIR"
+      curl -fsSL -o "$ARCHIVE" "https://get.helm.sh/helm-${HELM_VERSION}-windows-amd64.zip"
+      powershell.exe -NoProfile -Command \
+        "Expand-Archive -LiteralPath '$(cygpath -w "$ARCHIVE")' -DestinationPath '$(cygpath -w "$TEMP_DIR")' -Force"
+      cp "$TEMP_DIR/windows-amd64/helm.exe" "$HELM_DIR/helm.exe"
+      rm -rf "$ARCHIVE" "$TEMP_DIR"
+      export PATH="$HELM_DIR:$PATH"
+      ;;
+    *)
+      mkdir -p "$HELM_DIR"
+      HELM_INSTALL_DIR="$HELM_DIR" \
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3)"
+      export PATH="$HELM_DIR:$PATH"
+      ;;
+  esac
 else
   echo "✅ Helm is already installed."
 fi
