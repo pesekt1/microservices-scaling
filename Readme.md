@@ -53,6 +53,8 @@ Use the automated Makefile and Skaffold setup for a robust, production-like envi
 
 ### Start the stack
 
+Use bash terminal or Git Bash on Windows to run the following command:
+
 ```bash
 make up
 ```
