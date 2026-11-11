@@ -4,6 +4,11 @@ metadata:
   name: fraud-detection
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: fraud-detection
@@ -13,28 +18,29 @@ spec:
         app: fraud-detection
     spec:
       containers:
-      - name: fraud-detection
-        image: pesekt1/fraud-detection:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: PORT
-          value: "3003"
-        - name: RABBITMQ_URL
-          value: "amqp://rabbitmq"
-        - name: INPUT_QUEUE_NAME
-          value: "transactionPayloads"
-        - name: SUSPICIOUS_QUEUE_NAME
-          value: "suspiciousTransactions"
-        - name: ACCEPTED_QUEUE_NAME
-          value: "acceptedTransactions"
-        - name: MESSAGE_PROCESSING_SPEED
-          value: "3000"
-        volumeMounts:
-          - name: log-volume
-            mountPath: /var/log/fraud-detection  # Mount the log directory to this path
+        - name: fraud-detection
+          image: pesekt1/fraud-detection:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3003"
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq"
+            - name: INPUT_QUEUE_NAME
+              value: "transactionPayloads"
+            - name: SUSPICIOUS_QUEUE_NAME
+              value: "suspiciousTransactions"
+            - name: ACCEPTED_QUEUE_NAME
+              value: "acceptedTransactions"
+            - name: MESSAGE_PROCESSING_SPEED
+              value: "3000"
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/log/fraud-detection # Mount the log directory to this path
       volumes:
         - name: log-volume
           hostPath:
-            path: /var/log/fraud-detection  # This should be the location of logs on the node
+            path: /var/log/fraud-detection # This should be the location of logs on the node
             type: DirectoryOrCreate
