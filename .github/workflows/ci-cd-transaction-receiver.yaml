@@ -85,7 +85,7 @@ jobs:
             pesekt1/fraud-detection:latest
 
       - name: Wait for fraud-detection
-        run: curl -s -o /dev/null --retry 30 --retry-delay 2 --retry-connrefused http://localhost:3003/
+        run: curl -s -o /dev/null --retry 30 --retry-delay 2 --retry-all-errors http://localhost:3003/
 
       - name: Capture fraud-detection logs
         if: failure()
