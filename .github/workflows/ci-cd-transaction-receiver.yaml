@@ -93,6 +93,12 @@ jobs:
           docker ps -a
           docker logs fraud-detection
 
+      # Winston logger in transaction-receiver writes to this directory and fails if it can't create it
+      - name: Create log directory
+        run: |
+          sudo mkdir -p /var/log/transaction-receiver
+          sudo chmod -R 777 /var/log/transaction-receiver
+
       - name: Install dependencies
         run: |
           cd transaction-receiver
