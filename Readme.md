@@ -1,9 +1,43 @@
 # Microservices Demo with RabbitMQ Message Broker
 
-![System Architecture](./documentation/microservices-scaling-architecture.png)
+![System Architecture](./diagrams/system-architecture.png)
 [Download the full architecture diagram (.drawio)](./documentation/microservices-scaling.drawio)
 
 This project simulates a system for processing banking messages, similar to those used in financial institutions like Deutsche Börse. The architecture demonstrates how microservices communicate via RabbitMQ, process transactions, and integrate monitoring and scaling tools for a production-like environment.
+
+## Architecture
+
+### Services and message flow
+
+```
+bank ──HTTP──▶ transaction-receiver ──▶ [transactionPayloads] ──▶ fraud-detection
+                                                                     │
+                                  ┌──────────────────────────────────┤
+                                  ▼                                  ▼
+                       [acceptedTransactions]            [suspiciousTransactions]
+                                  │
+                                  ▼
+                       transaction-processing ──▶ MySQL
+```
+
+| Service                  | Role                                                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `bank`                   | Simulates a bank generating transactions and sending them to the receiver.                                  |
+| `transaction-receiver`   | HTTP entry point. Publishes incoming transactions to the `transactionPayloads` queue.                       |
+| `fraud-detection`        | Consumes `transactionPayloads`; flags ~5% as suspicious (`suspiciousTransactions`), the rest go to `acceptedTransactions`. |
+| `transaction-processing` | Consumes `acceptedTransactions` and stores the transactions in MySQL.                                       |
+| RabbitMQ                 | Message broker connecting the services.                                                                     |
+| MySQL                    | Persistent storage for processed transactions.                                                              |
+
+### Deployment diagrams
+
+Docker Compose:
+
+![Docker Compose deployment](./diagrams/docker-compose.png)
+
+Kubernetes:
+
+![Kubernetes deployment](./diagrams/kubernetes.png)
 
 ---
 
@@ -116,7 +150,7 @@ Simple local development and manual scaling.
 
 - No auto-scaling or advanced orchestration
 - Manual scaling only
-- Port mapping and service naming limitations
+- Scaled replicas cannot publish fixed host ports (only one container can bind a given host port)
 
 ### 2. Legacy Kubernetes Script
 
@@ -179,27 +213,32 @@ Manual scaling only. See above for commands and limitations.
 
 ### Kubernetes
 
-Auto-scaling with KEDA and Prometheus metrics. Example ScaledObject:
+Auto-scaling with KEDA. The ScaledObjects live next to each service in the `kubernetes` folder:
+
+| Service                  | Trigger                                                         | Replicas |
+| ------------------------ | --------------------------------------------------------------- | -------- |
+| `fraud-detection`        | Prometheus: `rabbitmq_queue_messages` of `transactionPayloads` (threshold 20)    | 1–10     |
+| `transaction-processing` | Prometheus: `rabbitmq_queue_messages` of `acceptedTransactions` (threshold 20)   | 1–10     |
+| `transaction-receiver`   | CPU utilization                                                 | 1–3      |
+
+Example ScaledObject (`kubernetes/fraud-detection/fraud-detection-scaledobject.yml`):
 
 ```yaml
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: consumer-microservice-scaledobject
-  namespace: default
+  name: fraud-detection-scaledobject
 spec:
   scaleTargetRef:
-    name: consumer-microservice
+    name: fraud-detection
   minReplicaCount: 1
   maxReplicaCount: 10
-  pollingInterval: 30
-  cooldownPeriod: 60
   triggers:
     - type: prometheus
       metadata:
         serverAddress: http://prometheus.default.svc.cluster.local:9090
         metricName: rabbitmq_queue_messages
-        query: avg(rabbitmq_queue_messages{queue="bankPackets"})
+        query: avg(rabbitmq_queue_messages{queue="transactionPayloads"})
         threshold: "20"
 ```
 
@@ -270,6 +309,64 @@ spec:
 - Docker
 - Docker-compose
 - MySQL
+- Kubernetes, Skaffold, Make
+- KEDA (event-driven autoscaling)
+- Prometheus, Grafana, Loki, Promtail (monitoring and logging)
+- Vitest (integration and system tests)
+- GitHub Actions (CI/CD)
+
+---
+
+## Testing
+
+The `transaction-receiver` has two test suites in `transaction-receiver/tests`:
+
+- **Integration test** (`integration.test.ts`): receiver + RabbitMQ only.
+- **System test** (`system.test.ts`): receiver + RabbitMQ + the `fraud-detection` service. A transaction published by the receiver must end up in `acceptedTransactions` or `suspiciousTransactions`.
+
+Run locally (RabbitMQ must be running, e.g. `docker-compose -f docker-compose-rabbitmq.yaml up -d`; the system test also needs `fraud-detection` running):
+
+```bash
+cd transaction-receiver
+npm install
+npx vitest run integration.test.ts
+cd tests && npx vitest run system.test.ts
+```
+
+Notes:
+
+- The receiver reads `RABBITMQ_URL` and `QUEUE_NAME` from `.env` via dotenv, which only loads from the current working directory. When running from another directory (e.g. `tests/` in CI), pass them as environment variables.
+- The shared logger writes to `/var/log/<service-name>`. Make sure that directory exists and is writable when running outside Docker.
+
+---
+
+## CI/CD
+
+Each service has a GitHub Actions workflow in `.github/workflows`:
+
+| Workflow                           | What it does                                                    |
+| ---------------------------------- | --------------------------------------------------------------- |
+| `ci-cd-bank.yaml`                  | Builds and pushes `pesekt1/bank`                                |
+| `ci-cd-transaction-receiver.yaml`  | Integration tests, system tests, then builds and pushes the image |
+| `ci-cd-fraud-detection.yaml`       | Builds and pushes `pesekt1/fraud-detection`                     |
+| `ci-cd-transaction-processing.yaml`| Builds and pushes `pesekt1/transaction-processing`              |
+
+- Triggered on pushes to `main` that change the service folder or the workflow file itself, or manually (`workflow_dispatch`).
+- Requires the repository secrets `DOCKER_USERNAME` and `DOCKER_PASSWORD`.
+- In the system-test job, RabbitMQ is a service container with a health check. `fraud-detection` is started afterwards with `docker run` on the same network, and the job waits until it responds before running the tests. This avoids a startup race between the services.
+
+---
+
+## Repository Structure
+
+| Folder                      | Content                                                      |
+| --------------------------- | ------------------------------------------------------------ |
+| `bank`, `transaction-receiver`, `fraud-detection`, `transaction-processing` | Microservice source code and Dockerfiles |
+| `kubernetes`                | Manifests applied by Skaffold (services, KEDA, monitoring)   |
+| `scripts`, `dependencies`   | Install scripts for global services (Grafana, KEDA, metrics-server) |
+| `docker-compose-config-yaml`| Loki/Promtail configs used by Docker Compose                 |
+| `diagrams`, `documentation` | Architecture diagrams                                        |
+| `unused-kubernetes`         | Older manifests kept for reference, not deployed             |
 
 ---
 
@@ -283,6 +380,8 @@ Create docker images and push them to your dockerhub:
 
 ```bash
 docker build -t pesekt1/bank ./bank
+docker build -t pesekt1/transaction-receiver ./transaction-receiver
+docker build -t pesekt1/fraud-detection ./fraud-detection
 docker build -t pesekt1/transaction-processing ./transaction-processing
 ```
 
@@ -290,8 +389,12 @@ Push images to dockerhub:
 
 ```bash
 docker push pesekt1/bank
+docker push pesekt1/transaction-receiver
+docker push pesekt1/fraud-detection
 docker push pesekt1/transaction-processing
 ```
+
+The CI/CD workflows (see above) do this automatically on pushes to `main`.
 
 ### Applying Kubernetes Manifests
 
@@ -357,6 +460,6 @@ Search for RabbitMQ metrics (e.g., rabbitmq_queue_messages_ready)
 
 ### Scaling in Kubernetes
 
-KEDA uses a default pollingInterval 30sec and cooldownPeriod 60sec, so there is a delay before scaling up or down. The consumer microservice is scaled based on the rules defined in the scaleobject.yaml. You can observe results in RabbitMQ (number of consumers, consumed messages, messages in the queue, etc).
+KEDA uses a default pollingInterval 30sec and cooldownPeriod 60sec, so there is a delay before scaling up or down. The microservices are scaled based on the rules defined in their `*-scaledobject.yml` files (see Service Scaling above). You can observe results in RabbitMQ (number of consumers, consumed messages, messages in the queue, etc).
 
 ---
