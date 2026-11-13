@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "transaction-receiver/**" # Trigger if files in transaction-receiver/ folder change
+      - ".github/workflows/ci-cd-transaction-receiver.yaml" # Trigger if this workflow file changes
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 

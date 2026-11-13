@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "fraud-detection/**" # Trigger if files in fraud-detection/ folder change
+      - ".github/workflows/ci-cd-fraud-detection.yaml" # Trigger if this workflow file changes
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 

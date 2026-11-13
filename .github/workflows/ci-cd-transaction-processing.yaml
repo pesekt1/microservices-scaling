@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "transaction-processing/**" # Trigger if files in transaction-processing/ folder change
+      - ".github/workflows/ci-cd-transaction-processing.yaml" # Trigger if this workflow file changes
 
   workflow_dispatch: # Allows you to manually run the workflow from the Actions tab
 
