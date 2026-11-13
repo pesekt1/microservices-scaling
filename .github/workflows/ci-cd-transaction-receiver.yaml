@@ -105,6 +105,9 @@ jobs:
           npm install
 
       - name: Run system tests
+        env:
+          RABBITMQ_URL: amqp://localhost
+          QUEUE_NAME: transactionPayloads
         run: |
           cd transaction-receiver/tests
           npx vitest run system.test.ts
